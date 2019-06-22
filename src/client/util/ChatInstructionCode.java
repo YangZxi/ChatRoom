@@ -1,5 +1,23 @@
+/**
+ * Copyright: 2019-2019，小树苗(www.xiaosm.cn)
+ * FileName: ClientUI
+ * Author:   OuYoung
+ * Date:     2019/06/22 22:19
+ * Description: 客户端聊天界面的主视图
+ * History:
+ * <author>          <time>          <version>          <desc>
+ * OuYoung         修改时间           版本号             描述
+ */
 package client.util;
 
+/**
+ * 〈一句话功能简述〉
+ * 〈消息发送和接收的指令CODE〉
+ *
+ * @author OuYoung
+ * @create 2019/06/22
+ * @since 1.0.0
+ */
 public class ChatInstructionCode {
     public String CLIENT_ONLINE = "9#";  // 客户端发送上线
     public String CLIENT_OFFLINE = "0#"; // 客户端发送下线

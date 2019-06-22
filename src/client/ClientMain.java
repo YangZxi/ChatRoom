@@ -1,5 +1,23 @@
+/**
+ * Copyright: 2019-2019，小树苗(www.xiaosm.cn)
+ * FileName: ClientMain
+ * Author:   OuYoung
+ * Date:     2019/06/22 22:18
+ * Description: 这是程序的入口
+ * History:
+ * <author>          <time>          <version>          <desc>
+ * OuYoung         修改时间           版本号             描述
+ */
 package client;
 
+/**
+ * 〈一句话功能简述〉
+ * 〈这是程序的入口〉
+ *
+ * @author OuYoung
+ * @create 2019/06/22
+ * @since 1.0.0
+ */
 import client.model.User;
 import client.service.UserManager;
 import client.ui.ClientUI;
@@ -58,15 +76,15 @@ public class ClientMain {
 }
 
 /*
-* 服务器发送给客户端的指令标识
-* 9 表示第一次上线
-* 0 表示下线
-* 1 表示私聊消息
-* 2 表示群聊消息
-* 3 表示刷新好友
-*
-* 01#666666@123456$
-*
-* 服务端发送给客户端的指令标识
-*
-* */
+ * 服务器发送给客户端的指令标识
+ * 9 表示第一次上线
+ * 0 表示下线
+ * 1 表示私聊消息
+ * 2 表示群聊消息
+ * 3 表示刷新好友
+ *
+ * 01#666666@123456$
+ *
+ * 服务端发送给客户端的指令标识
+ *
+ * */

@@ -1,5 +1,23 @@
+/**
+ * Copyright (C), 2015-2019
+ * FileName: Group
+ * Author:   OuYoung
+ * Date:     2019/06/22 22:11
+ * Description:
+ * History:
+ * <author>          <time>          <version>          <desc>
+ * OuYoung         修改时间           1.0.0             描述
+ */
 package client.model;
 
+/**
+ * 〈一句话功能简述〉<br> 
+ * 群模型
+ *
+ * @author OuYoung
+ * @create 2019/06/22
+ * @since 1.0.0
+ */
 public class Group {
 
     private String group_id;
