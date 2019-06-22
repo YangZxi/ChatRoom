@@ -1,0 +1,239 @@
+package server.util;
+
+import server.model.User;
+import server.ui.ServerUI;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+
+public class Message implements Runnable {
+
+    private Socket socket = null;
+    private ServerUI serverUI = null;
+
+    private DataOutputStream dos = null;
+    private DataInputStream dis = null;
+
+    private ChatInstructionCode CODE = new ChatInstructionCode();
+
+    public Message(Socket socket, ServerUI serverUI) {
+        this.socket = socket;
+        this.serverUI = serverUI;
+        try {
+            dos = new DataOutputStream(socket.getOutputStream());
+            dis = new DataInputStream(socket.getInputStream()); // 接收数据
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        String str = null;
+        try {
+            while ((str = receive()) != null) {     // 不能使用if语句，否则服务器端不能一直接受消息
+                // 获取标识     3#FROM:666666TO:666666MSG:123456,111111,222222,333333,444444,555555,777777,888888
+                String messageFlag = str.substring(0, 2);
+                // 获取内容
+                String message = str.substring(str.indexOf(CODE.MESSAGE_SPLIT_SYMBO) +
+                        CODE.MESSAGE_SPLIT_SYMBO.length());
+                if (messageFlag.equals(CODE.CLIENT_ONLINE)) {              // 如果标识为9#，表示上线
+                    System.out.println(messageFlag + " 上线处理 " + message);
+                    dealWithOnlineFunction(message);    // 处理上线
+                    continue;
+                } else if (messageFlag.equals(CODE.CLIENT_OFFLINE)) {       // 为0#，用户下线
+                    dealWithOfflineFunction(message);   // 处理下线
+                    continue;
+                }
+                System.out.println(str + "aaaaaaaaaaaaaaaaaaaaa");
+                // 获取发送者ID
+                String from = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
+                        CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
+                // 获取接收者
+                String to = str.substring(str.indexOf(CODE.CLIENT_TO) +CODE.CLIENT_TO.length(),
+                        str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
+                System.out.println(messageFlag + "---" + from + "---" + to + "---" + message);
+                // 通过标识执行不同的信息处理
+                if (messageFlag.equals(CODE.CLIENT_PRIVATE_CHAT)) {       // 为1#，处理私聊消息
+                    message = CODE.SERVER_PRIVATE_CHAT + CODE.CLIENT_FROM_ID +
+                            from + CODE.MESSAGE_SPLIT_SYMBO + getTime() + "\n"  + message;
+                    System.out.println("私聊" + message);     // 验证数据
+//                    this.send(from, message); // 给发送人发送
+                    this.send(to, message); // 给接收人发送
+                } else if (messageFlag.equals(CODE.CLIENT_GROUP_CHAT)) {       // 为2#，处理群聊消息
+                    System.out.println("群聊" + message);     // 验证数据
+                    sendAll("12#" + message);
+                } else if (messageFlag.equals(CODE.CLIENT_REFRESH_FRIENDS)) {       // 为3#，处理刷新指令
+                    System.out.println(message + "ddddddddddddd");
+                    dealWithRefreshFunction(to, message);
+                }
+            }
+        } catch (IOException e) {
+//            serverUI.setShowPanel("有一个客户端下线");	// 在界面显示
+//            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 给单个用户发送消息
+     *
+     * @param msg
+     */
+    public void send(String to, String msg) {
+        if (to == null) {
+            try {
+                System.out.println(msg);  // 验证数据
+                dos.writeUTF(msg);
+                dos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Set set = serverUI.getUserMap().keySet();   //
+            Iterator it = set.iterator();
+            while (it.hasNext()) {
+                String strID = (String) it.next();
+                if (strID.equals(to)) {
+                    Message message = serverUI.getUserMap().get(strID);
+//                System.out.println("sendAll 中");
+                    message.send(null, msg);    // 发送给指定的接收客户端
+                }
+            }
+        }
+    }
+
+    /**
+     * 给所有用户发送消息
+     *
+     * @param str
+     */
+    public void sendAll(String str) {
+        if (serverUI.getUserMap() == null || serverUI.getUserMap().size() == 0) {
+            return;
+        } else {
+            Set set = serverUI.getUserMap().keySet();   //
+            Iterator it = set.iterator();
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                Message message = serverUI.getUserMap().get(key);
+//                System.out.println("sendAll 中");
+                message.send(null, str);
+            }
+        }
+    }
+
+    public String receive() throws IOException {
+        String str = null;
+        str = dis.readUTF();
+        System.out.println(str);
+        return str;
+    }
+
+
+    /**
+     * 客户端上线处理
+     *
+     * @param str
+     */
+    public void dealWithOnlineFunction(String str) {
+        // 通过用户id截取用户的信息
+        String strID = str.substring(3, str.indexOf("昵称")).trim();     // 输出测试
+//        serverUI.setShowPanel(str + " 已上线 " + getTime() + "\n");  // 在服务器控制台显示
+//        String sql = "SELECT * FROM Chat_User WHERE user_id = \'" + strID + "\'";
+//                    System.out.println(sql);
+//        // 将返回的结果包装成User对象
+////                    User user = (User) serverUI.getUserManager().executeQuery(
+////                            sql, null).get(0);
+////                    System.out.println(user.getName());
+        // 将用户的id和Message对象放进Map
+        serverUI.getUserMap().put(strID, this);
+        // 以下是判断Map是否加入成功，仅作测试使用
+        serverUI.setSet(serverUI.getUserMap().keySet());   //
+        serverUI.setIt(serverUI.getSet().iterator());
+        while (serverUI.getIt().hasNext()) {
+            String strID1 = (String) serverUI.getIt().next();
+            System.out.println("Map添加成功" + strID1);
+        }
+//        // Map检测 end
+//        // 给当前在线用户发送上线信息，传一个ID
+        this.sendAll(CODE.SERVER_ONLINE + CODE.MESSAGE_SPLIT_SYMBO + "ID" +
+                strID + "昵称" + str.substring(str.indexOf("昵称：") + 3));
+    }
+
+    /**
+     * 客户端下线处理 标识 0
+     * from 客户端
+     *
+     * @param str
+     */
+    public void dealWithOfflineFunction(String str) {
+        // 通过用户id截取用户的信息
+        String strID = str.substring(3, str.indexOf("昵称")).trim();
+//        serverUI.setShowPanel(str + " 已下线 " + getTime() + "\n");
+        // 删除Map中当前下线的用户
+        serverUI.getUserMap().remove(strID);
+        // 以下是判断，仅作测试
+        serverUI.setSet(serverUI.getUserMap().keySet());   //
+        serverUI.setIt(serverUI.getSet().iterator());
+        while (serverUI.getIt().hasNext()) {
+            String strID1 = (String) serverUI.getIt().next();
+            System.out.println("Map删除成功" + strID1);
+        }
+        // 发送下线信息
+        this.sendAll(CODE.SERVER_OFFLINE + CODE.MESSAGE_SPLIT_SYMBO + "ID" +
+                strID + "昵称" + str.substring(str.indexOf("昵称：") + 3));
+    }
+
+    /**
+     * 处理好友刷新请求
+     *
+     * @param to  将刷新结果返回的用户ID
+     * @param str 请求刷新用户的全部好友好友
+     */
+    public void dealWithRefreshFunction(String to, String str) {
+        String msg = "";
+        // 将字符串转成数组
+        String[] arr = str.split(",");
+        for (int i = 0; i < arr.length; i++) {
+            // 获取当前在线的用户
+            serverUI.setSet(serverUI.getUserMap().keySet());   //
+            serverUI.setIt(serverUI.getSet().iterator());
+            while (serverUI.getIt().hasNext()) {
+                // 获取在线用户的id
+                String strID = (String) serverUI.getIt().next();
+                //                    System.out.println(strID + "map的id");
+                if (arr[i].equals(strID)) {     // 与当前在线的用户进行匹配
+                    msg = msg + strID + ",";
+                }
+            }
+        }
+        if (msg == null || msg.length() == 0) {
+            msg = "null";
+        }
+        msg = CODE.SERVER_REFRESH_FRIENDS + CODE.MESSAGE_SPLIT_SYMBO + msg;
+        System.out.println(msg + "返回处理");
+        this.send(to, msg);
+    }
+
+    /**
+     * 获取本地时间
+     * 插入在消息之前
+     * @return
+     */
+    public String getTime() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(date);
+    }
+
+}
