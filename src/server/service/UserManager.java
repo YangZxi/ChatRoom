@@ -25,13 +25,27 @@ public class UserManager extends BaseDao {
         return users;
     }
 
+    public String[] getGroupFriends(String sql) {
+        String str = null;
+        String[] groupFriends_id = null;
+        ResultSet resultSet = this.execute(sql,null);
+        try {
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString("group_friends"));
+                str = resultSet.getString("group_friends");
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        if (str != null) {
+            groupFriends_id = str.split(",");
+        }
+        return groupFriends_id;
+    }
+
     public static void main(String[] args) {
         UserManager userManager = new UserManager();
-//        ArrayList<User> users1 = new ArrayList<>();
-
-        User u = (User) userManager.executeQuery(
-                "SELECT * FROM Chat_User WHERE user_id = \'666666\'",null).get(0);
-        System.out.println(u.getName());
+        userManager.getGroupFriends("SELECT group_friends FROM Chat_Group WHERE group_id = '121234'");
     }
 
 

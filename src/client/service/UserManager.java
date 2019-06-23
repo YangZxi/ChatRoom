@@ -18,6 +18,7 @@ package client.service;
  * @create 2019/06/22
  * @since 1.0.0
  */
+import client.model.Group;
 import client.util.BaseDao;
 import client.model.User;
 
@@ -64,22 +65,30 @@ public class UserManager extends BaseDao {
      * @param user_id
      * @return
      */
-    public ArrayList<User> getFriends(String user_id) throws SQLException {
-        ArrayList<User> friends = new ArrayList<>();
+    public ArrayList<Object> getFriends(String user_id) throws SQLException {
+        ArrayList<Object> friends_groups = new ArrayList<>();
         String[] friendID = null;
+        String[] groupID = null;
         String strFriends = null;
-        String sql = "SELECT user_friends FROM Chat_Friend WHERE user_id = \'" + user_id +"\'";
+        String strGroups = null;
+        String sql = "SELECT user_friends,user_groups FROM Chat_Friend WHERE user_id = \'" + user_id +"\'";
         ResultSet resultSet = this.execute(sql,null);
         while (resultSet.next()) {
             if (resultSet.getString("user_friends") == null
             || resultSet.getString("user_friends").equals("")) {
-                System.out.println("No Friends");
+                System.out.println("No Friend");
             }
             strFriends = resultSet.getString("user_friends");
-            System.out.println(strFriends);
+            if (resultSet.getString("user_groups") == null
+                    || resultSet.getString("user_groups").equals("")) {
+                System.out.println("No Group");
+            }
+            strGroups = resultSet.getString("user_groups");
+//            System.out.println(strFriends);
         }
-        System.out.println("ppppppppppppppp   " + strFriends);
-        // 将查询的朋友账号分割放进数组
+        System.out.println("我的好友：   " + strFriends);
+        System.out.println("我的群组：   " + strGroups);
+        // 将查询的好友账号分割放进数组
         if (strFriends != null || !strFriends.equals("null")) {
             friendID = strFriends.split(",");
             for (int i = 0;i < friendID.length;i++) {
@@ -88,16 +97,29 @@ public class UserManager extends BaseDao {
                 String sql1 = "SELECT * FROM Chat_User WHERE user_id = \'" + friendID[i] +"\'";
 //                friends.add((User) this.executeQuery(sql1,null).get(0));
                 User user = (User) this.executeQuery(sql1, null).get(0);
-                friends.add(user);
+                friends_groups.add(user);
 //                friends.add(idArr[i]);
             }
-            System.out.println(friends.size() + "    123");
+            System.out.println(friends_groups.size() + "    123");
         }
-        return friends;
+        // 将查询的群组账号分割放进数组
+        if (strGroups != null || !strGroups.equals("null")) {
+            groupID = strGroups.split(",");
+            for (int i = 0;i < groupID.length;i++) {
+                System.out.print(groupID[i] + " ");
+                // 通过id获取群信息
+                String sql1 = "SELECT * FROM Chat_Group WHERE group_id = \'" + groupID[i] +"\'";
+                Group group = (Group) this.executeQuery(sql1, null).get(0);
+                friends_groups.add(group);
+//                friends.add(idArr[i]);
+            }
+            System.out.println(friends_groups.size() + "    123");
+        }
+        return friends_groups;
     }
 
     // 查询用户用户名（手机号）
-    public boolean getUserByName(String userName) throws SQLException, ClassNotFoundException {
+    public boolean getUserByName(String userName) throws SQLException {
         boolean flag = false;
 //        baseDao.getConn();   // 连接
 //        String sql = "SELECT * FROM `chat_user` WHERE user_phone = \" + \"'\" + phone + \"'\"";
@@ -131,19 +153,28 @@ public class UserManager extends BaseDao {
 
     @Override
     protected ArrayList createObject(ResultSet rs) throws SQLException {
-        ArrayList<User> users = new ArrayList<User>();
+        ArrayList<Object> friends = new ArrayList<Object>();
         while (rs.next()) {
-            User user = new User();
-            user.setId(rs.getInt("user_id"));
-            user.setName(rs.getString("user_name"));
-            user.setHobby(rs.getString("user_hobby"));
-            user.setSex(rs.getString("user_sex"));
-            user.setBirthday(rs.getString("user_birthday"));
-            user.setPhone(rs.getString("user_phone"));
-            user.setProvince(rs.getString("user_province"));
-            users.add(user);
+            if (rs.getInt("type" ) == 0) {  // 0表示User
+                User user = new User();
+                user.setId(rs.getInt("user_id"));
+                user.setName(rs.getString("user_name"));
+                user.setHobby(rs.getString("user_hobby"));
+                user.setSex(rs.getString("user_sex"));
+                user.setBirthday(rs.getString("user_birthday"));
+                user.setPhone(rs.getString("user_phone"));
+                user.setProvince(rs.getString("user_province"));
+                friends.add(user);
+            }else if (rs.getInt("type") == 1) {     // 1表示Group
+                Group group = new Group();
+                group.setGroup_id(rs.getString("group_id"));
+                group.setGroup_name(rs.getString("group_name"));
+                group.setUser_id(rs.getString("user_id"));
+                friends.add(group);
+                System.out.println("群成功");
+            }
         }
-        return users;
+        return friends;
     }
 
     public static void main(String[] args) throws SQLException {

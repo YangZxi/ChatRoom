@@ -18,8 +18,8 @@ package client.util;
  * @create 2019/06/22
  * @since 1.0.0
  */
+import client.model.FriendModel;
 import client.model.User;
-import client.model.UserModel;
 import client.ui.ChatShowInputUI;
 import client.ui.ClientUI;
 
@@ -43,7 +43,7 @@ public class Message implements Runnable {
     private JTextArea showArea;
     private JTextArea inputArea;
     private ChatInstructionCode CODE = new ChatInstructionCode();
-    private UserModel userModel = null;
+    private FriendModel friendModel = null;
     private ChatShowInputUI csUI = null;
 
     public User getUser() {
@@ -138,6 +138,7 @@ public class Message implements Runnable {
                 e.printStackTrace();
             }
         }
+        // 好像没用
         if (str.startsWith(CODE.CLIENT_PRIVATE_CHAT) || str.startsWith(CODE.CLIENT_GROUP_CHAT)) {
             // 截取id
             String strId = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) + CODE.CLIENT_FROM_ID.length(),
@@ -145,10 +146,11 @@ public class Message implements Runnable {
             // 将消息截取出来
             String msg = str.substring(str.indexOf(CODE.MESSAGE_SPLIT_SYMBO) + 4);
         }
+        // 没用 end
         if (str.startsWith(CODE.CLIENT_PRIVATE_CHAT)) {      // 如果客户端发送的消息开头为1#，处理为私聊消息
             this.send(str);
         } else if (str.startsWith(CODE.CLIENT_GROUP_CHAT)) {    // 2#开头，处理群聊消息
-
+            this.send(str);
         }
     }
 
@@ -217,31 +219,31 @@ public class Message implements Runnable {
         Iterator it = set.iterator();
 //        System.out.println("寻找匹配------------------------------------------" + clientUI.getPersonList().size());
         while (it.hasNext()) {
-            UserModel userModel = (UserModel) it.next();
-//            System.out.println(userModel.getGroup_id() + "###########");
+            FriendModel friendModel = (FriendModel) it.next();
+//            System.out.println(friendModel.getGroup_id() + "###########");
             // 当id相同时
-            if (userModel.getId().equals(strID)) {
+            if (friendModel.getId().equals(strID)) {
                 String strStatus = status == true ? "上线" : "离线";
-                userModel.getOnlineStatus().setText(strStatus);
+                friendModel.getOnlineStatus().setText(strStatus);
 //                System.out.println(strStatus);
             }
         }
 //        ChatShowInputUI csUI = new ChatShowInputUI(strID,strName,this);     // 聊天界面
-//        UserModel person = new UserModel(strID,strName,clientUI,csUI);    // 左侧在线列表
+//        FriendModel person = new FriendModel(strID,strName,clientUI,csUI);    // 左侧在线列表
 //        person.setBounds(0, clientUI.getPersonList().size() * 70, 310, 70);
 //        // 添加进好友Map集合
 //        clientUI.getPersonList().put(person,csUI);
 //        // 遍历Map集合，在好友列表显示
-//        UserModel userModel = null;
+//        FriendModel friendModel = null;
 //        Set set = clientUI.getPersonList().keySet();   //
 //        Iterator it = set.iterator();
 //        while (it.hasNext() == false) {
-//            UserModel jPanel = (UserModel) it.next();
+//            FriendModel jPanel = (FriendModel) it.next();
 ////            System.out.println(strID+" !! "+jPanel.getGroup_id());     // 数据验证
 //            // 当服务器传来的id与放进列表panel的id相同
 //            if (jPanel.getGroup_id().equals(strID)) {
-//                userModel = jPanel;
-//                clientUI.getOnlineListPanel().add(userModel);
+//                friendModel = jPanel;
+//                clientUI.getOnlineListPanel().add(friendModel);
 //                clientUI.getOnlineListPanel().setVisible(false);
 //                clientUI.getOnlineListPanel().setVisible(true);
 //            }
@@ -287,13 +289,13 @@ public class Message implements Runnable {
         clientUI.setSet(clientUI.getPersonList().keySet());
         clientUI.setIt(clientUI.getSet().iterator());
         while (clientUI.getIt().hasNext()) {
-            userModel = (UserModel) clientUI.getIt().next();
-            csUI = clientUI.getPersonList().get(userModel);
+            friendModel = (FriendModel) clientUI.getIt().next();
+            csUI = clientUI.getPersonList().get(friendModel);
             if (csUI.getStr_Id().equals(from)) {
 //                String userName = from.substring();
                 // 在对应的好友块上显示小红点
                 if (csUI.isVisible() == false) {
-                    userModel.getRed_dot().setVisible(true);
+                    friendModel.getRed_dot().setVisible(true);
                 }
                 // 在聊天界面的显示区域显示内容
                 csUI.setShowAreaText(msg);

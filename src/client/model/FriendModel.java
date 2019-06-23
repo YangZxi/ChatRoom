@@ -27,9 +27,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
-public class UserModel extends JPanel {
+public class FriendModel extends JPanel {
 
-	private HashMap<UserModel, ChatShowInputUI> personList = null;
+	private HashMap<FriendModel, ChatShowInputUI> personList = null;
 
 	private String id = null;
 	private String name = null;
@@ -48,7 +48,7 @@ public class UserModel extends JPanel {
 			public void run() {
 				try {
 					JFrame jf = new JFrame();
-					UserModel frame = new UserModel();
+					FriendModel frame = new FriendModel();
 					jf.getContentPane().add(frame);
 					jf.setBounds(100,100,500,300);
 					jf.setVisible(true);
@@ -75,22 +75,22 @@ public class UserModel extends JPanel {
 		return red_dot;
 	}
 
-	public HashMap<UserModel, ChatShowInputUI> getPersonList() {
+	public HashMap<FriendModel, ChatShowInputUI> getPersonList() {
 		return personList;
 	}
 
-	public void setPersonList(HashMap<UserModel, ChatShowInputUI> personList) {
+	public void setPersonList(HashMap<FriendModel, ChatShowInputUI> personList) {
 		this.personList = personList;
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public UserModel() {
+	public FriendModel() {
 		init();
 	}
 
-	public UserModel(String id, String user_name, ClientUI clientUI, ChatShowInputUI csUI) {
+	public FriendModel(String id, String user_name, ClientUI clientUI, ChatShowInputUI csUI) {
 		init();
 		this.id = id;
 		this.name = user_name;
@@ -99,7 +99,7 @@ public class UserModel extends JPanel {
 		this.csUI = csUI;
 		this.setVisible(true);
 	}
-	
+
 	public void init() {
 		this.addMouseListener(new MouseAdapter() {
 			@Override
@@ -138,7 +138,7 @@ public class UserModel extends JPanel {
 				setBackground(new Color(240, 240, 240));
 			}
 		});
-	
+
 		this.setBounds(0, 0, 310, 70);
 		this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(179, 179, 179)));
 		this.setLayout(null);
@@ -158,9 +158,9 @@ public class UserModel extends JPanel {
 		onlineStatus.setFont(new Font("微软雅黑", Font.PLAIN, 16));
 		onlineStatus.setBounds(255, 42, 34, 18);
 		add(onlineStatus);
-		
+
 		red_dot = new JLabel("");
-		red_dot.setIcon(new ImageIcon(UserModel.class.getResource("/client/images/red_dot.png")));
+		red_dot.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/red_dot.png")));
 		red_dot.setBounds(268, 10, 16, 16);
 		red_dot.setVisible(false);
 		add(red_dot);

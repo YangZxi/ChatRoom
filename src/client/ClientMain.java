@@ -32,7 +32,8 @@ import java.util.ArrayList;
 public class ClientMain {
 
     private static int PORT = 3355;
-    private static String ADDRESS = "47.107.244.7";
+//    private static String ADDRESS = "47.107.244.7";
+    private static String ADDRESS = "localhost";
     private UserManager userManager = null;
 
     /**
@@ -45,10 +46,12 @@ public class ClientMain {
             // 连接服务器
             Socket socket = new Socket(ADDRESS, PORT);
             // 从数据库获取User信息，传给客户端界面，有用!!! important
+            // 登录用户的信息
             String strSQL = "SELECT * FROM Chat_User WHERE user_id = ?";
             userManager = new UserManager();
             ArrayList arrayList = new ArrayList();
             arrayList.add(userID);
+            // 将查询的结果包装为User对象
             User user = (User) userManager.executeQuery(strSQL,arrayList).get(0);
 //            System.out.println(user.getId()+user.getName()+user.getSex());
 //            Message message = new Message(socket);
