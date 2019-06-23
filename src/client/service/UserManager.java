@@ -61,7 +61,7 @@ public class UserManager extends BaseDao {
     }
 
     /**
-     * 获取好友列表
+     * 获取好友列表 和 群列表
      * @param user_id
      * @return
      */
@@ -89,7 +89,7 @@ public class UserManager extends BaseDao {
         System.out.println("我的好友：   " + strFriends);
         System.out.println("我的群组：   " + strGroups);
         // 将查询的好友账号分割放进数组
-        if (strFriends != null || !strFriends.equals("null")) {
+        if (strFriends != null) {
             friendID = strFriends.split(",");
             for (int i = 0;i < friendID.length;i++) {
                 System.out.print(friendID[i] + " ");
@@ -103,7 +103,7 @@ public class UserManager extends BaseDao {
             System.out.println(friends_groups.size() + "    123");
         }
         // 将查询的群组账号分割放进数组
-        if (strGroups != null || !strGroups.equals("null")) {
+        if (strGroups != null) {
             groupID = strGroups.split(",");
             for (int i = 0;i < groupID.length;i++) {
                 System.out.print(groupID[i] + " ");

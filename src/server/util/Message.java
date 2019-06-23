@@ -58,27 +58,35 @@ public class Message implements Runnable {
                 }
                 System.out.println(str + "aaaaaaaaaaaaaaaaaaaaa");
                 // 获取发送者ID
-                String from = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
-                        CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
+                String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
+                        CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
+                // 获取发送者ID
+                String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
+                        CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO));
                 // 获取接收者
-                String to = str.substring(str.indexOf(CODE.CLIENT_TO) + CODE.CLIENT_TO.length(),
+                String to_id = str.substring(str.indexOf(CODE.CLIENT_TO) + CODE.CLIENT_TO.length(),
                         str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
-                System.out.println(messageFlag + "---" + from + "---" + to + "---" + message);
+                System.out.println(messageFlag + "---" + from_id + "---" + from_name + "---" + to_id + "---" + message);
                 // 通过标识执行不同的信息处理
                 if (messageFlag.equals(CODE.CLIENT_PRIVATE_CHAT)) {       // 为1#，处理私聊消息
-                    message = CODE.SERVER_PRIVATE_CHAT + CODE.CLIENT_FROM_ID +
-                            from + CODE.MESSAGE_SPLIT_SYMBO + getTime() + "\n" + message;
+                    message = CODE.SERVER_PRIVATE_CHAT +
+                            str.substring(str.indexOf(CODE.CLIENT_PRIVATE_CHAT) +
+                                    CODE.CLIENT_PRIVATE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO)) +
+                            CODE.MESSAGE_SPLIT_SYMBO +
+                            getTime() + "\n" + message;
                     System.out.println("私聊" + message);     // 验证数据
-//                    this.send(from, message); // 给发送人发送
-                    this.send(to, message); // 给接收人发送
+                    this.send(to_id, message); // 给接收人发送
                 } else if (messageFlag.equals(CODE.CLIENT_GROUP_CHAT)) {       // 为2#，处理群聊消息
                     System.out.println("群聊" + message);     // 验证数据
-                    message = CODE.SERVER_GROUP_CHAT + CODE.CLIENT_FROM_ID +
-                            from + CODE.MESSAGE_SPLIT_SYMBO + getTime() + "\n" + message;
-                    sendGroup(from,to, message);
+                    message = CODE.SERVER_GROUP_CHAT +
+                            str.substring(str.indexOf(CODE.CLIENT_PRIVATE_CHAT) +
+                                    CODE.CLIENT_PRIVATE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO)) +
+                            CODE.MESSAGE_SPLIT_SYMBO +
+                            getTime() + "\n" + message;
+                    sendGroup(from_id, to_id, message);
                 } else if (messageFlag.equals(CODE.CLIENT_REFRESH_FRIENDS)) {       // 为3#，处理刷新指令
-                    System.out.println(message + "ddddddddddddd");
-                    dealWithRefreshFunction(to, message);
+//                    System.out.println(message + "ddddddddddddd");
+                    dealWithRefreshFunction(to_id, message);
                 }
             }
         } catch (IOException e) {
@@ -142,7 +150,7 @@ public class Message implements Runnable {
      * @param to  接受消息的群ID
      * @param msg 消息
      */
-    public void sendGroup(String from,String to, String msg) {
+    public void sendGroup(String from, String to, String msg) {
         UserManager userManager = new UserManager();
         String sql = "SELECT group_friends FROM Chat_Group WHERE group_id = \'" + to + "\'";
         // 得到返回的群成员id数组
@@ -150,6 +158,7 @@ public class Message implements Runnable {
         // 发送给每个群成员且上线的用户
         for (int i = 0; i < groupFriends_id.length; i++) {
             // 如果接收者的id和发送者的id相同，跳过
+            System.out.println(groupFriends_id[i]);
             if (from.equals(groupFriends_id[i])) continue;
             Message message = serverUI.getUserMap().get(groupFriends_id[i]);
             // 如果用户没有上线，跳过

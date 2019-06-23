@@ -80,18 +80,27 @@ public class Message implements Runnable {
                     System.out.println(strID + "---" + strName);
                     isFriendOnlineStatus(strID, false);
                 } else if (messageFlag.equals(CODE.SERVER_PRIVATE_CHAT)) {    // 私聊消息 标识11#
-                    // 截取接收消息的ID
-                    System.out.println(str);
+                    // 截取发送消息的ID
                     String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
                             CODE.CLIENT_FROM_ID.length(),str.indexOf(CODE.CLIENT_FROM_NAME));
+                    // 截取发送消息的名称
                     String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
                             CODE.CLIENT_FROM_NAME.length(),str.indexOf(CODE.CLIENT_TO));
                     System.out.println("接收私聊消息：" + from_id + "---" + message);
+                    // 消息将会显示；发送人昵称 时间 和消息内容
                     message = from_name + " " + message;
                     this.showMessage(from_id,message);
                 } else if (messageFlag.equals(CODE.SERVER_GROUP_CHAT)) {      // 群聊消息 标识12#
-                    System.out.println("接收群聊消息：" + str);
-                    String msg = str.substring(2);
+                    // 截取发送消息的ID
+                    String to_id = str.substring(str.indexOf(CODE.CLIENT_TO) +
+                            CODE.CLIENT_TO.length(),str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
+                    // 截取发送消息的名称
+                    String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
+                            CODE.CLIENT_FROM_NAME.length(),str.indexOf(CODE.CLIENT_TO));
+                    System.out.println("接收群聊消息：" + to_id + "---" + message);
+                    // 消息将会显示；发送人昵称 时间 和消息内容
+                    message = from_name + " " + message;
+                    this.showMessage(to_id,message);
 //                    this.clientUI.setShowAreaText(msg);
                 } else if (messageFlag.equals(CODE.SERVER_REFRESH_FRIENDS)) {   // 好友列表刷新消息 标识13#
                     refreshFriendsReceive(message);
@@ -260,7 +269,7 @@ public class Message implements Runnable {
         String str = clientUI.getMyFriendsID().toString();
         try {
             dos.writeUTF(CODE.CLIENT_REFRESH_FRIENDS + CODE.CLIENT_FROM_ID +
-                    user.getId() + CODE.CLIENT_TO + user.getId() + CODE.MESSAGE_SPLIT_SYMBO + str);
+                    user.getId() + CODE.CLIENT_FROM_NAME + CODE.CLIENT_TO + user.getId() + CODE.MESSAGE_SPLIT_SYMBO + str);
         } catch (IOException e) {
             e.printStackTrace();
         }

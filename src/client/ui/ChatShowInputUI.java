@@ -127,22 +127,23 @@ public class ChatShowInputUI extends JPanel {
         JPanel chatToolPanel = new JPanel();
         chatToolPanel.setBounds(0, 415, 840, 35);
         chatToolPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(179, 179, 179)));
+        chatToolPanel.setBackground(BOTTOM_RIGHT_BGCOLOR);
         chatAreaPanel.add(chatToolPanel);
         chatToolPanel.setLayout(null);
-        
+
         JPanel chatToolLeftPanel = new JPanel();
         chatToolLeftPanel.setBounds(10, 6, 130, 24);
         chatToolPanel.add(chatToolLeftPanel);
         chatToolLeftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 1));
-        
+
         JLabel emoji_label = new JLabel("");
         emoji_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/emoji.png")));
         chatToolLeftPanel.add(emoji_label);
-        
+
         JLabel screenshot_label = new JLabel("");
         screenshot_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/screenshot.png")));
         chatToolLeftPanel.add(screenshot_label);
-        
+
         JLabel file_label = new JLabel("");
         file_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/file.png")));
         chatToolLeftPanel.add(file_label);
@@ -240,22 +241,23 @@ public class ChatShowInputUI extends JPanel {
       JPanel chatToolPanel = new JPanel();
       chatToolPanel.setBounds(0, 415, 670, 35);
       chatToolPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(179, 179, 179)));
+      chatToolPanel.setBackground(BOTTOM_RIGHT_BGCOLOR);
       chatAreaPanel.add(chatToolPanel);
       chatToolPanel.setLayout(null);
-      
+
       JPanel chatToolLeftPanel = new JPanel();
       chatToolLeftPanel.setBounds(10, 6, 130, 24);
       chatToolPanel.add(chatToolLeftPanel);
       chatToolLeftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 1));
-      
+
       JLabel emoji_label = new JLabel("");
       emoji_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/emoji.png")));
       chatToolLeftPanel.add(emoji_label);
-      
+
       JLabel screenshot_label = new JLabel("");
       screenshot_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/screenshot.png")));
       chatToolLeftPanel.add(screenshot_label);
-      
+
       JLabel file_label = new JLabel("");
       file_label.setIcon(new ImageIcon(ChatShowInputUI.class.getResource("/client/images/file.png")));
       chatToolLeftPanel.add(file_label);
@@ -299,41 +301,41 @@ public class ChatShowInputUI extends JPanel {
       sendButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
       sendButton.setBounds(590, 590, 70, 35);
       chatAreaPanel.add(sendButton);
-      
+
       JPanel groupInformationPanel = new JPanel();
       groupInformationPanel.setBounds(670, 45, 170, 635);
       groupInformationPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(179, 179, 179)));
       add(groupInformationPanel);
       groupInformationPanel.setLayout(null);
-      
+
       JPanel informationPanel = new JPanel();
       informationPanel.setBounds(5, 5, 160, 200);
       groupInformationPanel.add(informationPanel);
       informationPanel.setLayout(null);
-      
+
       JLabel informationTitle = new JLabel("暂时没有新通知");
       informationTitle.setHorizontalAlignment(SwingConstants.CENTER);
       informationTitle.setFont(new Font("微软雅黑", Font.PLAIN, 16));
       informationTitle.setBounds(5, 160, 150, 18);
       informationPanel.add(informationTitle);
-      
+
       JPanel groupFriendsPanel = new JPanel();
       groupFriendsPanel.setBounds(0, 205, 170, 425);
       groupFriendsPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(179, 179, 179)));
       groupInformationPanel.add(groupFriendsPanel);
       groupFriendsPanel.setLayout(null);
-      
+
       JLabel lblNewLabel = new JLabel("成员 (1000/2000)");
       lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
       lblNewLabel.setFont(new Font("微软雅黑", Font.PLAIN, 16));
       lblNewLabel.setBounds(5, 0, 160, 25);
       groupFriendsPanel.add(lblNewLabel);
-      
+
       // 内部好友列表
       JPanel groupFriendsPanel_inner = new JPanel();
       groupFriendsPanel_inner.setPreferredSize(new Dimension(160, 100));
       groupFriendsPanel_inner.setLayout(null);
-      
+
       JScrollPane groupFriendsScrollPane = new JScrollPane(groupFriendsPanel_inner);
       groupFriendsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
       groupFriendsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
