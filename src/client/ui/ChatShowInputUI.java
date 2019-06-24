@@ -61,7 +61,7 @@ public class ChatShowInputUI extends JPanel {
     }
 
     public ChatShowInputUI() {
-        singleUI();
+        groupUI();
     }
 
     public ChatShowInputUI(String str_Id, String str_name,int type ,Message message) {

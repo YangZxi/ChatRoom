@@ -168,7 +168,7 @@ public class ClientUI extends JFrame {
 
     public void connection() throws SQLException {
         this.message.connection();    // 连接服务器
-        this.loadFriendList();      // 加载好友列表
+        this.loadFriendList(0);      // 加载好友列表
         this.message.processSend("LOGIN");  // 给服务器发送上线通知
     }
 
@@ -310,20 +310,20 @@ public class ClientUI extends JFrame {
         bottomLeftPanel.setLayout(null);
 
         // 好友列表Top固定Bar
-        JPanel onlineTopBar = new JPanel();
-        onlineTopBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(179, 179, 179)));
-        onlineTopBar.setBounds(0, 0, 310, 45);
-        onlineTopBar.setBackground(BOTTOM_LEFT_BGCOLOR);
-        onlineTopBar.setLayout(null);
-        bottomLeftPanel.add(onlineTopBar);
+        JPanel botLeftTopBar = new JPanel();
+        botLeftTopBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(179, 179, 179)));
+        botLeftTopBar.setBounds(0, 0, 310, 45);
+        botLeftTopBar.setBackground(BOTTOM_LEFT_BGCOLOR);
+        botLeftTopBar.setLayout(null);
+        bottomLeftPanel.add(botLeftTopBar);
 
         JLabel onlinTopBar_name = new JLabel("  好友列表");
         onlinTopBar_name.setForeground(FONT_COLOR);
         onlinTopBar_name.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/user_icon.png")));
         onlinTopBar_name.setFont(new Font("微软雅黑", Font.PLAIN, 22));
         onlinTopBar_name.setBounds(30, 0, 146, 45);
-        onlineTopBar.add(onlinTopBar_name);
-        bottomLeftPanel.add(onlineTopBar);
+        botLeftTopBar.add(onlinTopBar_name);
+        bottomLeftPanel.add(botLeftTopBar);
 
         JButton refreshFriendsBtn = new JButton("");
         refreshFriendsBtn.addMouseListener(new MouseAdapter() {
@@ -337,7 +337,7 @@ public class ClientUI extends JFrame {
         refreshFriendsBtn.setBorder(null);
         refreshFriendsBtn.setFocusPainted(false); // 去除点击后的文字虚线边框(焦点边框)
         refreshFriendsBtn.setBackground(BOTTOM_LEFT_BGCOLOR);
-        onlineTopBar.add(refreshFriendsBtn);
+        botLeftTopBar.add(refreshFriendsBtn);
 
         // 在线列表 滚动面板
         onlineListPanel = new JPanel();
@@ -366,15 +366,35 @@ public class ClientUI extends JFrame {
         JScrollPane scrollPane = new JScrollPane(onlineListPanel);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBounds(0, 45, 310, 635);
+        scrollPane.setBounds(0, 45, 310, 575);
         scrollPane.setBorder(null);
         bottomLeftPanel.add(scrollPane);
+        
+        JPanel botLeftBottomPanel = new JPanel();
+        botLeftBottomPanel.setBounds(0, 620, 310, 60);
+        bottomLeftPanel.add(botLeftBottomPanel);
+        botLeftBottomPanel.setLayout(null);
+        
+        JLabel addFiendLabel = new JLabel("");
+        addFiendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend.png")));
+        addFiendLabel.setBounds(250, 10, 40, 40);
+        botLeftBottomPanel.add(addFiendLabel);
 
         bottomRightPanel = new JPanel();
         bottomRightPanel.setBackground(Color.PINK);
         bottomRightPanel.setLayout(null);
         bottomRightPanel.setBounds(310, 0, 840, 680);
         bottomPanel.add(bottomRightPanel);
+        
+        JPanel b_r_childPanel = new JPanel();
+        b_r_childPanel.setBounds(0, 0, 840, 680);
+        bottomRightPanel.add(b_r_childPanel);
+        b_r_childPanel.setLayout(null);
+        
+        JLabel b_r_childTitel = new JLabel("欢迎使用多鱼聊天室");
+        b_r_childTitel.setFont(new Font("微软雅黑", Font.BOLD, 22));
+        b_r_childTitel.setBounds(335, 180, 203, 40);
+        b_r_childPanel.add(b_r_childTitel);
 
 //        chatShowInputUI = new ChatShowInputUI();
 //        bottomPanel.add(chatShowInputUI);
@@ -383,7 +403,7 @@ public class ClientUI extends JFrame {
     /**
      * 加载好友
      */
-    public void loadFriendList() throws SQLException {
+    public void loadFriendList(int type) throws SQLException {
         UserManager userManager = new UserManager();
         ArrayList<Object> friends = userManager.getFriends(String.valueOf(this.user.getId()));
 //        System.out.println("hhh");
@@ -395,7 +415,7 @@ public class ClientUI extends JFrame {
                 String strID =  String.valueOf(user.getId());
                 String strName = user.getName();
                 ChatShowInputUI csUI = new ChatShowInputUI(strID, strName,0, message);     // 聊天界面
-                FriendModel person = new FriendModel(strID, strName,this,csUI);    // 左侧好友列表的好友
+                FriendModel person = new FriendModel                                                                                  (strID, strName,0,this,csUI);    // 左侧好友列表的好友
                 person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
                 // 添加进好友Map集合
                 this.personList.put(person, csUI);
@@ -404,12 +424,13 @@ public class ClientUI extends JFrame {
                 // 添加到myFriendsID
                 myFriendsID.append(strID + ",");
             }
+            // 实例化一个群组Panel
             if (object instanceof Group) {
                 Group group = (Group) object;
                 String strID =  String.valueOf(group.getGroup_id());
                 String strName = group.getGroup_name();
                 ChatShowInputUI csUI = new ChatShowInputUI(strID, strName,1, message);     // 聊天界面
-                FriendModel person = new FriendModel(strID, strName,this,csUI);    // 左侧好友列表的好友
+                FriendModel person = new FriendModel(strID, strName,1,this,csUI);    // 左侧好友列表的好友
                 person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
                 // 添加进好友Map集合
                 this.personList.put(person, csUI);

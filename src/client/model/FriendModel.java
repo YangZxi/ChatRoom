@@ -34,6 +34,7 @@ public class FriendModel extends JPanel {
 	private String id = null;
 	private String name = null;
 	private JLabel personName;
+	private String type;
 	private JLabel onlineStatus;	// 在线状态
 	private ClientUI clientUI;
 	private ChatShowInputUI csUI = null;
@@ -90,13 +91,15 @@ public class FriendModel extends JPanel {
 		init();
 	}
 
-	public FriendModel(String id, String user_name, ClientUI clientUI, ChatShowInputUI csUI) {
+	public FriendModel(String id, String user_name,int type, ClientUI clientUI, ChatShowInputUI csUI) {
 		init();
 		this.id = id;
 		this.name = user_name;
 		this.personName.setText(user_name);
 		this.clientUI = clientUI;
 		this.csUI = csUI;
+		String a = type == 0 ? "离线" : "群聊";
+		onlineStatus.setText(a);
 		this.setVisible(true);
 	}
 

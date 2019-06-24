@@ -29,8 +29,8 @@ import java.util.ArrayList;
 public class UserManager extends BaseDao {
 
     /**
-     *
-     * @param user
+     * 用户注册，新建一个用户
+     * @param user	写入数据库的用户信息
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -46,7 +46,7 @@ public class UserManager extends BaseDao {
     /**
      * 获取密码
      * @param user_id
-     * @return  数据库查询到的密码
+     * @return 数据库查询到的密码
      * @throws SQLException
      */
     public String getPassword(String user_id) throws SQLException {
@@ -118,12 +118,17 @@ public class UserManager extends BaseDao {
         return friends_groups;
     }
 
-    // 查询用户用户名（手机号）
+    /**
+     * 获取查询用户的ID
+     * @param userName
+     * @return true表示已注册，false未注册
+     * @throws SQLException
+     */
     public boolean getUserByName(String userName) throws SQLException {
         boolean flag = false;
 //        baseDao.getConn();   // 连接
 //        String sql = "SELECT * FROM `chat_user` WHERE user_phone = \" + \"'\" + phone + \"'\"";
-        String sql = "SELECT * FROM `chat_user` WHERE user_name = ?";
+        String sql = "SELECT * FROM `Chat_User` WHERE user_name = ?";
 //        baseDao.setPreparedStatement(baseDao.getConnection().prepareStatement(sql));
 //        baseDao.getPreparedStatement().setString(1,userName);
 //        baseDao.setResultSet(baseDao.getPreparedStatement().executeQuery());
@@ -151,6 +156,13 @@ public class UserManager extends BaseDao {
         return flag;
     }
 
+    public User getUser(String user_id) {
+    	User user = null;
+    	String sql = "SELECT * FROM Chat_User WHERE user_id = \'" + user_id +"\'";
+    	user = (User) this.executeQuery(sql, null).get(0);
+    	return user;
+    }
+    
     @Override
     protected ArrayList createObject(ResultSet rs) throws SQLException {
         ArrayList<Object> friends = new ArrayList<Object>();

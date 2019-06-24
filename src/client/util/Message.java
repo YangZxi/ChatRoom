@@ -28,6 +28,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -281,6 +282,13 @@ public class Message implements Runnable {
      * @param str
      */
     public void refreshFriendsReceive(String str) {
+        // 刷新好友列表
+//        try {
+//            clientUI.loadFriendList(1);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+        // 刷新好友在线状态
         if (str.equals("null")) return;     // 无需处理
         String[] arr = str.split(",");
         System.out.println(str + "          返回的刷新好友列表");
