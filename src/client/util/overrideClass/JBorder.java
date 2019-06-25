@@ -1,4 +1,4 @@
-package client.overrideClass;
+package client.util.overrideClass;
 
 import java.awt.Color;
 import java.awt.Component;

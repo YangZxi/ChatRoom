@@ -1,18 +1,13 @@
-package server.util;
+package server.service;
 
-import server.service.UserManager;
-import server.model.User;
 import server.ui.ServerUI;
+import server.util.ChatInstructionCode;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.Socket;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,6 +19,8 @@ public class Message implements Runnable {
 
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
+
+    private UserManager userManager = new UserManager();
 
     private ChatInstructionCode CODE = new ChatInstructionCode();
 
@@ -46,8 +43,8 @@ public class Message implements Runnable {
                 // 获取标识     3#FROM:666666TO:666666MSG:123456,111111,222222,333333,444444,555555,777777,888888
                 String messageFlag = str.substring(0, 2);
                 // 获取内容
-                String message = str.substring(str.indexOf(CODE.MESSAGE_SPLIT_SYMBO) +
-                        CODE.MESSAGE_SPLIT_SYMBO.length());
+                String message = str.substring(str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL) +
+                        CODE.MESSAGE_SPLIT_SYMBOL.length());
                 if (messageFlag.equals(CODE.CLIENT_ONLINE)) {              // 如果标识为9#，表示上线
                     System.out.println(messageFlag + " 上线处理 " + message);
                     dealWithOnlineFunction(message);    // 处理上线
@@ -56,37 +53,41 @@ public class Message implements Runnable {
                     dealWithOfflineFunction(message);   // 处理下线
                     continue;
                 }
-                System.out.println(str + "aaaaaaaaaaaaaaaaaaaaa");
+//                System.out.println(str + "aaaaaaaaaaaaaaaaaaaaa");
                 // 获取发送者ID
                 String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
                         CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
                 // 获取发送者ID
                 String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
-                        CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO));
+                        CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO_ID));
                 // 获取接收者
-                String to_id = str.substring(str.indexOf(CODE.CLIENT_TO) + CODE.CLIENT_TO.length(),
-                        str.indexOf(CODE.MESSAGE_SPLIT_SYMBO));
+                String to_id = str.substring(str.indexOf(CODE.CLIENT_TO_ID) + CODE.CLIENT_TO_ID.length(),
+                        str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL));
                 System.out.println(messageFlag + "---" + from_id + "---" + from_name + "---" + to_id + "---" + message);
                 // 通过标识执行不同的信息处理
-                if (messageFlag.equals(CODE.CLIENT_PRIVATE_CHAT)) {       // 为1#，处理私聊消息
-                    message = CODE.SERVER_PRIVATE_CHAT +
-                            str.substring(str.indexOf(CODE.CLIENT_PRIVATE_CHAT) +
-                                    CODE.CLIENT_PRIVATE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO)) +
-                            CODE.MESSAGE_SPLIT_SYMBO +
+                if (messageFlag.equals(CODE.CLIENT_SINGLE_CHAT)) {       // 为1#，处理私聊消息
+                    message = CODE.SERVER_SINGLE_CHAT +
+                            str.substring(str.indexOf(CODE.CLIENT_SINGLE_CHAT) +
+                                    CODE.CLIENT_SINGLE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL)) +
+                            CODE.MESSAGE_SPLIT_SYMBOL +
                             getTime() + "\n" + message;
                     System.out.println("私聊" + message);     // 验证数据
                     this.send(to_id, message); // 给接收人发送
                 } else if (messageFlag.equals(CODE.CLIENT_GROUP_CHAT)) {       // 为2#，处理群聊消息
                     System.out.println("群聊" + message);     // 验证数据
                     message = CODE.SERVER_GROUP_CHAT +
-                            str.substring(str.indexOf(CODE.CLIENT_PRIVATE_CHAT) +
-                                    CODE.CLIENT_PRIVATE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBO)) +
-                            CODE.MESSAGE_SPLIT_SYMBO +
+                            str.substring(str.indexOf(CODE.CLIENT_SINGLE_CHAT) +
+                                    CODE.CLIENT_SINGLE_CHAT.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL)) +
+                            CODE.MESSAGE_SPLIT_SYMBOL +
                             getTime() + "\n" + message;
                     sendGroup(from_id, to_id, message);
                 } else if (messageFlag.equals(CODE.CLIENT_REFRESH_FRIENDS)) {       // 为3#，处理刷新指令
 //                    System.out.println(message + "ddddddddddddd");
                     dealWithRefreshFunction(to_id, message);
+                } else if (messageFlag.equals(CODE.CLIENT_ADD_FRIEND)) {    // 为4#，加好友
+                    this.dealWithAddFiendFunction(from_id,to_id);
+                } else if (messageFlag.equals(CODE.CLIENT_ADD_GROUP)) {     // 为5#，加群
+                    this.dealWithAddGroupFunction(from_id,to_id);
                 }
             }
         } catch (IOException e) {
@@ -151,7 +152,6 @@ public class Message implements Runnable {
      * @param msg 消息
      */
     public void sendGroup(String from, String to, String msg) {
-        UserManager userManager = new UserManager();
         String sql = "SELECT group_friends FROM Chat_Group WHERE group_id = \'" + to + "\'";
         // 得到返回的群成员id数组
         String[] groupFriends_id = userManager.getGroupFriends(sql);
@@ -201,7 +201,7 @@ public class Message implements Runnable {
         }
 //        // Map检测 end
 //        // 给当前在线用户发送上线信息，传一个ID
-        this.sendAll(CODE.SERVER_ONLINE + CODE.MESSAGE_SPLIT_SYMBO + "ID" +
+        this.sendAll(CODE.SERVER_ONLINE + CODE.MESSAGE_SPLIT_SYMBOL + "ID" +
                 strID + "昵称" + str.substring(str.indexOf("昵称：") + 3));
     }
 
@@ -225,7 +225,7 @@ public class Message implements Runnable {
             System.out.println("Map删除成功" + strID1);
         }
         // 发送下线信息
-        this.sendAll(CODE.SERVER_OFFLINE + CODE.MESSAGE_SPLIT_SYMBO + "ID" +
+        this.sendAll(CODE.SERVER_OFFLINE + CODE.MESSAGE_SPLIT_SYMBOL + "ID" +
                 strID + "昵称" + str.substring(str.indexOf("昵称：") + 3));
     }
 
@@ -255,9 +255,46 @@ public class Message implements Runnable {
         if (msg == null || msg.length() == 0) {
             msg = "null";
         }
-        msg = CODE.SERVER_REFRESH_FRIENDS + CODE.MESSAGE_SPLIT_SYMBO + msg;
+        msg = CODE.SERVER_REFRESH_FRIENDS + CODE.MESSAGE_SPLIT_SYMBOL + msg;
         System.out.println(msg + "返回处理");
         this.send(to, msg);
+    }
+
+    /**
+     * 处理加好友请求
+     * @param from_id   添加好友的用户id
+     * @param to_id     被添加的用户id
+     */
+    public void dealWithAddFiendFunction(String from_id,String to_id) {
+        String msg = this.getMessage(CODE.SERVER_ADD_FRIEND,from_id,"",to_id,"");
+        this.send(to_id,msg);
+    }
+
+    /**
+     * 处理加群请求
+     * @param from_id   添加群的用户id
+     * @param group_id     被添加的群id
+     */
+    public void dealWithAddGroupFunction(String from_id,String group_id) {
+        String msg = this.getMessage(CODE.SERVER_ADD_GROUP,from_id,"",group_id,"");
+        // 通过群号获取群主id
+        String user_id = userManager.getGroupOwner(group_id);
+        this.send(user_id,msg);
+    }
+
+    /**
+     * 包装服务端消息
+     * @param code      消息代码指令
+     * @param from_id   发送用户id
+     * @param from_name 发送用户昵称
+     * @param to_id     接收用户id
+     * @param msg       消息内容
+     * @return
+     */
+    public String getMessage(String code,String from_id,String from_name,String to_id,String msg) {
+        String str = code + CODE.CLIENT_FROM_ID + from_id + CODE.CLIENT_FROM_NAME + from_name +
+                CODE.CLIENT_TO_ID + to_id + CODE.MESSAGE_SPLIT_SYMBOL + msg;
+        return str;
     }
 
     /**

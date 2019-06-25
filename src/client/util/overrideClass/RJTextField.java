@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * OuYoung         修改时间           版本号             描述
  */
-package client.overrideClass;
+package client.util.overrideClass;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

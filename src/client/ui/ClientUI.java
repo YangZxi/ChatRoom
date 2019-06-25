@@ -25,7 +25,7 @@ import client.model.User;
 
 import client.service.UserManager;
 import client.util.CloseUtil;
-import client.util.Message;
+import client.service.Message;
 import com.sun.awt.AWTUtilities;
 
 import javax.swing.*;
@@ -399,7 +399,7 @@ public class ClientUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (addFriendUI == null) {
-                    addFriendUI = new AddFriendUI();
+                    addFriendUI = new AddFriendUI(message);
                 }
                 addFriendUI.setLocationRelativeTo(clientUI);
                 addFriendUI.setVisible(true);
@@ -445,6 +445,7 @@ public class ClientUI extends JFrame {
     public void loadFriendList(int type) throws SQLException {
         UserManager userManager = new UserManager();
         ArrayList<Object> friends = userManager.getFriends(String.valueOf(this.user.getId()));
+        if (friends == null) return;
 //        System.out.println("hhh");
 //        System.out.println(friends.size());
         for (Object object : friends) {

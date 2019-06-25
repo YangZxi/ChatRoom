@@ -11,25 +11,21 @@
 package client.ui;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.util.Locale;
 
 import javax.swing.border.EmptyBorder;
 
+import client.service.Message;
 import com.sun.awt.AWTUtilities;
 
 import client.model.User;
-import client.overrideClass.JBorder;
-import client.overrideClass.RJTextField;
+import client.util.overrideClass.JBorder;
 import client.service.UserManager;
 
 import java.awt.Font;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -67,6 +63,7 @@ public class AddFriendUI extends JFrame {
 	private JLabel add_lbl;
 	private JButton reback_btn;
 	private JLabel tip_lbl;
+	private Message message;
 
 	/**
 	 * Launch the application.
@@ -75,7 +72,7 @@ public class AddFriendUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddFriendUI a = new AddFriendUI();
+					AddFriendUI a = new AddFriendUI(null);
 					a.setType(JFrame.Type.UTILITY);
 					a.setVisible(true);
 				} catch (Exception e) {
@@ -88,7 +85,8 @@ public class AddFriendUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddFriendUI() {
+	public AddFriendUI(Message message) {
+		this.message = message;
 		this.init();
 		// 圆角
 		AWTUtilities.setWindowShape(this,
@@ -354,7 +352,8 @@ public class AddFriendUI extends JFrame {
 		add_lbl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				
+				String id = user_id;
+				message.addFriendOrGroupSend(id,findType);
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {

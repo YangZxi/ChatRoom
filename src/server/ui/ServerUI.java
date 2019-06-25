@@ -1,10 +1,8 @@
 package server.ui;
 
 import server.service.UserManager;
-import server.model.User;
-import server.util.Message;
+import server.service.Message;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;

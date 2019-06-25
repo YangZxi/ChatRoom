@@ -22,7 +22,7 @@ import client.model.User;
 import client.service.UserManager;
 import client.ui.ClientUI;
 import client.ui.LoginUI;
-import client.util.Message;
+import client.service.Message;
 
 import java.io.IOException;
 import java.net.Socket;

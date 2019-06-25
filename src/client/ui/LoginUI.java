@@ -19,9 +19,9 @@ package client.ui;
  * @since 1.0.0
  */
 import client.ClientMain;
-import client.overrideClass.RJButton;
-import client.overrideClass.RJLabel;
-import client.overrideClass.RJPanel;
+import client.util.overrideClass.RJButton;
+import client.util.overrideClass.RJLabel;
+import client.util.overrideClass.RJPanel;
 
 import client.service.UserManager;
 import com.sun.awt.AWTUtilities;

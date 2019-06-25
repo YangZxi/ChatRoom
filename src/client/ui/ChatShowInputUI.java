@@ -11,8 +11,7 @@
 package client.ui;
 
 import client.util.ChatInstructionCode;
-import client.util.Message;
-import org.omg.CORBA.PRIVATE_MEMBER;
+import client.service.Message;
 
 import javax.swing.*;
 import java.awt.*;
@@ -353,15 +352,15 @@ public class ChatShowInputUI extends JPanel {
         String str = inputArea.getText();
 //        System.out.println(str_Id + "@"  + str);
         System.out.println(CODE.CLIENT_FROM_ID + message.getUser().getId() +
-                CODE.CLIENT_TO + str_Id + CODE.MESSAGE_SPLIT_SYMBO + str);
+                CODE.CLIENT_TO_ID + str_Id + CODE.MESSAGE_SPLIT_SYMBOL + str);
         if (type == 0) {    // 私聊
-            this.message.processSend(CODE.CLIENT_PRIVATE_CHAT + CODE.CLIENT_FROM_ID + message.getUser().getId() +
-                    CODE.CLIENT_FROM_NAME + message.getUser().getName() + CODE.CLIENT_TO + str_Id +
-                    CODE.MESSAGE_SPLIT_SYMBO + str); // 发送消息
+            this.message.processSend(CODE.CLIENT_SINGLE_CHAT + CODE.CLIENT_FROM_ID + message.getUser().getId() +
+                    CODE.CLIENT_FROM_NAME + message.getUser().getName() + CODE.CLIENT_TO_ID + str_Id +
+                    CODE.MESSAGE_SPLIT_SYMBOL + str); // 发送消息
         }else if (type == 1) {  // 群聊
             this.message.processSend(CODE.CLIENT_GROUP_CHAT + CODE.CLIENT_FROM_ID + message.getUser().getId() +
-                    CODE.CLIENT_FROM_NAME + message.getUser().getName() + CODE.CLIENT_TO + str_Id +
-                    CODE.MESSAGE_SPLIT_SYMBO + str); // 发送消息
+                    CODE.CLIENT_FROM_NAME + message.getUser().getName() + CODE.CLIENT_TO_ID + str_Id +
+                    CODE.MESSAGE_SPLIT_SYMBOL + str); // 发送消息
         }
         this.setShowAreaText(message.getUser().getName() + " " + getTime() + "\n" + str);
         inputArea.setText(null);

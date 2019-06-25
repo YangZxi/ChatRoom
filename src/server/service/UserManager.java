@@ -43,9 +43,25 @@ public class UserManager extends BaseDao {
         return groupFriends_id;
     }
 
+    public String getGroupOwner(String group_id) {
+        String user_id = null;
+        String sql = "SELECT user_id FROM Chat_Group WHERE group_id = \'" + group_id + "\'";
+        rs = execute(sql,null);
+        try {
+            while (rs.next()) {
+                user_id = rs.getString("user_id");
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        System.out.println(user_id);
+        return user_id;
+    }
+
     public static void main(String[] args) {
         UserManager userManager = new UserManager();
-        userManager.getGroupFriends("SELECT group_friends FROM Chat_Group WHERE group_id = '121234'");
+//        userManager.getGroupFriends("SELECT group_friends FROM Chat_Group WHERE group_id = '121234'");
+        userManager.getGroupOwner("121234");
     }
 
 

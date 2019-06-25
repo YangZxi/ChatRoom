@@ -1,4 +1,4 @@
-package client.overrideClass;
+package client.util.overrideClass;
 
 import javax.swing.*;
 import java.awt.*;

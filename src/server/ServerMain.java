@@ -2,7 +2,7 @@ package server;
 
 import server.ui.ServerUI;
 import server.util.CloseUtil;
-import server.util.Message;
+import server.service.Message;
 
 import java.io.IOException;
 import java.net.ServerSocket;
