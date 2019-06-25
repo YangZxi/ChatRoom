@@ -163,6 +163,22 @@ public class UserManager extends BaseDao {
     	return user;
     }
     
+    public String getGroupName(String group_id) {
+    	String sql = "SELECT group_name FROM Chat_Group WHERE group_id = \'" + group_id +"\'";
+    	ResultSet resultSet = execute(sql,null);
+        String group_name = null;
+        try {
+			while (resultSet.next()) {
+				group_name = resultSet.getString("group_name");
+			    System.out.println(group_name);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return group_name;
+    }
+    
     @Override
     protected ArrayList createObject(ResultSet rs) throws SQLException {
         ArrayList<Object> friends = new ArrayList<Object>();

@@ -18,6 +18,7 @@ package client.ui;
  * @create 2019/06/22
  * @since 1.0.0
  */
+
 import client.model.FriendModel;
 import client.model.Group;
 import client.model.User;
@@ -69,14 +70,18 @@ public class ClientUI extends JFrame {
     private Set set = null;
     private Iterator it = null;
 
+    private ClientUI clientUI;
     private JPanel contentPane;
     private JButton closeButton;
     private JButton zxhButton;
     private JPanel onlineListPanel;
     private JPanel bottomPanel;
     private JPanel bottomRightPanel;
-    private ChatShowInputUI chatShowInputUI;
     private JLabel userNameLabel;
+    private ChatShowInputUI chatShowInputUI;
+    private AddFriendUI addFriendUI;
+    private int ADDFRIENDUI_WIDTH = 0;
+    private int ADDFRIENDUI_HEIGHT = 0;
 
     /**
      * Launch the application.
@@ -102,6 +107,10 @@ public class ClientUI extends JFrame {
 
     public void setMessage(Message message) {
         this.message = message;
+    }
+
+    public void setClientUI(ClientUI clientUI) {
+        this.clientUI = clientUI;
     }
 
     public JPanel getOnlineListPanel() {
@@ -174,6 +183,8 @@ public class ClientUI extends JFrame {
 
     public ClientUI() {
         this.init();
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         AWTUtilities.setWindowShape(this,
                 new RoundRectangle2D.Double(0.0D, 0.0D, this.getWidth(), this.getHeight(), 16.0D, 16.0D));
 //      // 加入好友
@@ -187,7 +198,6 @@ public class ClientUI extends JFrame {
     }
 
     /**
-     *
      * @param user 登录用户的信息
      */
     public ClientUI(User user) {
@@ -195,6 +205,8 @@ public class ClientUI extends JFrame {
         this.myFriendsID = new StringBuffer();
         this.myGroupsID = new StringBuffer();
         this.init();
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         AWTUtilities.setWindowShape(this,
                 new RoundRectangle2D.Double(0.0D, 0.0D, this.getWidth(), this.getHeight(), 16.0D, 16.0D));
         this.userNameLabel.setText(user.getName());
@@ -202,9 +214,8 @@ public class ClientUI extends JFrame {
     }
 
     public void init() {
-    	setIconImage(Toolkit.getDefaultToolkit().getImage(LoginUI.class.getResource("/client/images/icon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginUI.class.getResource("/client/images/icon.png")));
         this.setUndecorated(true);
-        this.setLocationRelativeTo(null);
         // 圆角窗体
         AWTUtilities.setWindowShape(this,
                 new RoundRectangle2D.Double(20.0D, 20.0D, this.getWidth(), this.getHeight(), 16.0D, 16.0D));
@@ -265,9 +276,15 @@ public class ClientUI extends JFrame {
         closeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                message.sendClose("close");
-                CloseUtil.closeAll(socket, dis, dos);
-                System.exit(0);
+                try {
+                    message.sendClose("close");
+                } catch (NullPointerException e1) {
+                    e1.getMessage();
+                } finally {
+                    CloseUtil.closeAll(socket, dis, dos);
+                    System.exit(0);
+                }
+
             }
 
             @Override
@@ -367,30 +384,52 @@ public class ClientUI extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBounds(0, 45, 310, 575);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setBorder(null);
         bottomLeftPanel.add(scrollPane);
-        
+
         JPanel botLeftBottomPanel = new JPanel();
         botLeftBottomPanel.setBounds(0, 620, 310, 60);
         bottomLeftPanel.add(botLeftBottomPanel);
         botLeftBottomPanel.setLayout(null);
-        
-        JLabel addFiendLabel = new JLabel("");
-        addFiendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend.png")));
-        addFiendLabel.setBounds(250, 10, 40, 40);
-        botLeftBottomPanel.add(addFiendLabel);
+
+        JLabel addFriendLabel = new JLabel("");
+        addFriendLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (addFriendUI == null) {
+                    addFriendUI = new AddFriendUI();
+                }
+                addFriendUI.setLocationRelativeTo(clientUI);
+                addFriendUI.setVisible(true);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+            }
+        });
+        addFriendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend.png")));
+        addFriendLabel.setBounds(250, 10, 40, 40);
+        botLeftBottomPanel.add(addFriendLabel);
 
         bottomRightPanel = new JPanel();
         bottomRightPanel.setBackground(Color.PINK);
         bottomRightPanel.setLayout(null);
         bottomRightPanel.setBounds(310, 0, 840, 680);
         bottomPanel.add(bottomRightPanel);
-        
+
         JPanel b_r_childPanel = new JPanel();
         b_r_childPanel.setBounds(0, 0, 840, 680);
         bottomRightPanel.add(b_r_childPanel);
         b_r_childPanel.setLayout(null);
-        
+
         JLabel b_r_childTitel = new JLabel("欢迎使用多鱼聊天室");
         b_r_childTitel.setFont(new Font("微软雅黑", Font.BOLD, 22));
         b_r_childTitel.setBounds(335, 180, 203, 40);
@@ -412,10 +451,10 @@ public class ClientUI extends JFrame {
             // 实例化一个好友Panel
             if (object instanceof User) {
                 User user = (User) object;
-                String strID =  String.valueOf(user.getId());
+                String strID = String.valueOf(user.getId());
                 String strName = user.getName();
-                ChatShowInputUI csUI = new ChatShowInputUI(strID, strName,0, message);     // 聊天界面
-                FriendModel person = new FriendModel                                                                                  (strID, strName,0,this,csUI);    // 左侧好友列表的好友
+                ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 0, message);     // 聊天界面
+                FriendModel person = new FriendModel(strID, strName, 0, this, csUI);    // 左侧好友列表的好友
                 person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
                 // 添加进好友Map集合
                 this.personList.put(person, csUI);
@@ -427,10 +466,10 @@ public class ClientUI extends JFrame {
             // 实例化一个群组Panel
             if (object instanceof Group) {
                 Group group = (Group) object;
-                String strID =  String.valueOf(group.getGroup_id());
+                String strID = String.valueOf(group.getGroup_id());
                 String strName = group.getGroup_name();
-                ChatShowInputUI csUI = new ChatShowInputUI(strID, strName,1, message);     // 聊天界面
-                FriendModel person = new FriendModel(strID, strName,1,this,csUI);    // 左侧好友列表的好友
+                ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 1, message);     // 聊天界面
+                FriendModel person = new FriendModel(strID, strName, 1, this, csUI);    // 左侧好友列表的好友
                 person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
                 // 添加进好友Map集合
                 this.personList.put(person, csUI);
@@ -447,6 +486,7 @@ public class ClientUI extends JFrame {
 
     public static void main(String[] args) {
         ClientUI c = new ClientUI();
+        c.setClientUI(c);
         c.setVisible(true);
     }
 }
