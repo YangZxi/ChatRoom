@@ -84,11 +84,28 @@ public class Message implements Runnable {
                 } else if (messageFlag.equals(CODE.CLIENT_REFRESH_FRIENDS)) {       // 为3#，处理刷新指令
 //                    System.out.println(message + "ddddddddddddd");
                     dealWithRefreshFunction(to_id, message);
-                } else if (messageFlag.equals(CODE.CLIENT_ADD_FRIEND)) {    // 为4#，加好友
-                    this.dealWithAddFiendFunction(from_id,to_id);
-                } else if (messageFlag.equals(CODE.CLIENT_ADD_GROUP)) {     // 为5#，加群
-                    this.dealWithAddGroupFunction(from_id,to_id);
+                } else if (messageFlag.equals(CODE.CLIENT_CHANGE_FRIEND)) {    // 为4#，好友请求
+                    if (message.equals("APPLY")) {
+                        this.dealWithAddFiendFunction(from_id, from_name, to_id, message);
+                    }else if (message.equals("DELETE")) {
+
+                    }
+                } else if (messageFlag.equals(CODE.CLIENT_CHANGE_GROUP)) {     // 为5#，加群
+                    this.dealWithAddGroupFunction(from_id, from_name, to_id, message);
+                } else if (messageFlag.equals(CODE.CLIENT_REQUEST_FRIEND)) {     // 为6#，对申请的好友请求进行的回应
+                    if (message.equals("AGREE")) {      // 同意
+                        this.dealWithAgreeFunction(from_id,from_name,to_id,message,0);
+                    }else if (message.equals("REFUSE")) {   // 拒绝
+                        this.dealWithRefuseFunction(from_id,from_name,to_id,message,0);
+                    }
+                }else if(messageFlag.equals(CODE.CLIENT_REQUEST_GROUP)) {       // 为7#，处理群聊的请求
+                    if (message.equals("AGREE")) {      // 同意
+                        this.dealWithAgreeFunction(from_id,from_name,to_id,message,1);
+                    }else if (message.equals("REFUSE")) {   // 拒绝
+                        this.dealWithRefuseFunction(from_id,from_name,to_id,message,1);
+                    }
                 }
+
             }
         } catch (IOException e) {
 //            serverUI.setShowPanel("有一个客户端下线");	// 在界面显示
@@ -152,9 +169,12 @@ public class Message implements Runnable {
      * @param msg 消息
      */
     public void sendGroup(String from, String to, String msg) {
-        String sql = "SELECT group_friends FROM Chat_Group WHERE group_id = \'" + to + "\'";
         // 得到返回的群成员id数组
-        String[] groupFriends_id = userManager.getGroupFriends(sql);
+        String str = userManager.getGroupFriends(to);
+        String[] groupFriends_id = null;
+        if (str != null) {
+            groupFriends_id = str.split(",");
+        }
         // 发送给每个群成员且上线的用户
         for (int i = 0; i < groupFriends_id.length; i++) {
             // 如果接收者的id和发送者的id相同，跳过
@@ -262,28 +282,94 @@ public class Message implements Runnable {
 
     /**
      * 处理加好友请求
-     * @param from_id   添加好友的用户id
-     * @param to_id     被添加的用户id
+     *
+     * @param from_id 添加好友的用户id
+     * @param to_id   被添加的用户id
      */
-    public void dealWithAddFiendFunction(String from_id,String to_id) {
-        String msg = this.getMessage(CODE.SERVER_ADD_FRIEND,from_id,"",to_id,"");
-        this.send(to_id,msg);
+    public void dealWithAddFiendFunction(String from_id, String from_name, String to_id, String message) {
+        String msg = this.getMessage(CODE.SERVER_CHANGE_FRIEND, from_id, from_name, to_id, message);
+//        System.out.println(msg + "返回加好友");
+        this.send(to_id, msg);
     }
 
     /**
      * 处理加群请求
-     * @param from_id   添加群的用户id
-     * @param group_id     被添加的群id
+     *
+     * @param from_id  添加群的用户id
+     * @param group_id 被添加的群id
      */
-    public void dealWithAddGroupFunction(String from_id,String group_id) {
-        String msg = this.getMessage(CODE.SERVER_ADD_GROUP,from_id,"",group_id,"");
+    public void dealWithAddGroupFunction(String from_id, String from_name, String group_id, String message) {
+        String msg = this.getMessage(CODE.SERVER_CHANGE_GROUP, from_id, from_name, group_id, message);
         // 通过群号获取群主id
         String user_id = userManager.getGroupOwner(group_id);
-        this.send(user_id,msg);
+        this.send(user_id, msg);
+    }
+
+    /**
+     * 处理同意 包括好友和群
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param message
+     * @param type
+     */
+    public void dealWithAgreeFunction(String from_id, String from_name, String to_id, String message,int type) {
+        String msg = "";
+        if (type == 0) {     // 同意加好友
+            // 操作数据库给双方添加好友
+            String from_friends = userManager.getUserFriends(from_id);
+            if (from_friends == null || from_friends.equals("null")) {
+                from_friends = "";
+            }
+            // 新增好友
+            from_friends = from_friends + to_id + ",";
+            userManager.updateUserFriends(from_friends,from_id);
+            String to_friends = userManager.getUserFriends(to_id);
+            if (to_friends == null || to_friends.equals("null")) {
+                to_friends = "";
+            }
+            to_friends = to_friends + from_id + ",";
+            userManager.updateUserFriends(to_friends,to_id);
+            // 给发送请求用户反馈
+            msg = getMessage(CODE.SERVER_REQUEST_FRIEND, from_id, from_name, to_id, message);
+        } else if (type == 1) {   // 同意加群
+            // 操作数据库添加进群聊
+            String group_friends = userManager.getGroupFriends(from_id);
+            if (group_friends == null || group_friends.equals("null")) {
+                group_friends = "";
+            }
+            group_friends = group_friends + to_id + ",";
+            userManager.updateGroupFriend(group_friends,from_id);
+            String user_groups = userManager.getUserGroups(to_id);
+            user_groups = user_groups + from_id +",";
+            userManager.updateGroup(user_groups,to_id);
+            msg = getMessage(CODE.SERVER_REQUEST_GROUP,from_id,from_name,to_id,message);
+        }
+        this.send(to_id, msg);
+    }
+
+    /**
+     * 处理拒绝 包括好友 群
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param message
+     * @param type
+     */
+    public void dealWithRefuseFunction(String from_id, String from_name, String to_id, String message,int type) {
+        String msg = "";
+        if (type == 0) {     // 拒绝加好友
+            // 给发送请求用户反馈
+            msg = getMessage(CODE.SERVER_REQUEST_FRIEND, from_id, from_name, to_id, message);
+        } else if (type == 1) {   // 拒绝加群
+            msg = getMessage(CODE.SERVER_REQUEST_GROUP,from_id,from_name,to_id,message);
+        }
+        this.send(to_id, msg);
     }
 
     /**
      * 包装服务端消息
+     *
      * @param code      消息代码指令
      * @param from_id   发送用户id
      * @param from_name 发送用户昵称
@@ -291,7 +377,7 @@ public class Message implements Runnable {
      * @param msg       消息内容
      * @return
      */
-    public String getMessage(String code,String from_id,String from_name,String to_id,String msg) {
+    public String getMessage(String code, String from_id, String from_name, String to_id, String msg) {
         String str = code + CODE.CLIENT_FROM_ID + from_id + CODE.CLIENT_FROM_NAME + from_name +
                 CODE.CLIENT_TO_ID + to_id + CODE.MESSAGE_SPLIT_SYMBOL + msg;
         return str;

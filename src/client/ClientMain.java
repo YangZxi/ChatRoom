@@ -56,6 +56,7 @@ public class ClientMain {
 //            System.out.println(user.getId()+user.getName()+user.getSex());
 //            Message message = new Message(socket);
             clientUI = new ClientUI(user);
+            clientUI.setClientUI(clientUI);
             clientUI.setVisible(true);
 //            message.addElements(clientUI.getUser(),clientUI.getShowArea(),clientUI.getInputArea());
             Message message = new Message(socket,clientUI);

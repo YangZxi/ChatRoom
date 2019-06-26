@@ -110,22 +110,60 @@ public class Message implements Runnable {
 //                    this.clientUI.setShowAreaText(msg);
                 } else if (messageFlag.equals(CODE.SERVER_REFRESH_FRIENDS)) {   // 好友列表刷新消息 标识13#
                     refreshFriendsReceive(message);
-                } else if (messageFlag.equals(CODE.SERVER_ADD_FRIEND)) {    // 加好友请求 标识14#
+                } else if (messageFlag.equals(CODE.SERVER_CHANGE_FRIEND)) {    // 好友请求 标识14#
                     // 截取发送消息的ID
                     String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
                             CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
                     // 截取发送消息的名称
                     String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
                             CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO_ID));
-                    this.addFriendOrGroupReceive(from_id, from_name, 0);
-                } else if (messageFlag.equals(CODE.SERVER_ADD_GROUP)) {     // 加群请求 标识15#
+                    String to_id = str.substring(str.indexOf(CODE.CLIENT_TO_ID) +
+                            CODE.CLIENT_TO_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL));
+                    if (message.equals("APPLY")) {
+                        this.applyFriendOrGroupReceive(from_id, from_name, to_id, message, 0);
+                    } else if (messageFlag.equals("DELETE")) {
+
+                    }
+                } else if (messageFlag.equals(CODE.SERVER_CHANGE_GROUP)) {         // 群请求 15#
                     // 截取发送消息的ID
                     String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
                             CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
                     // 截取发送消息的名称
                     String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
                             CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO_ID));
-                    this.addFriendOrGroupReceive(from_id, from_name, 1);
+                    String to_id = str.substring(str.indexOf(CODE.CLIENT_TO_ID) +
+                            CODE.CLIENT_TO_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL));
+                    if (message.equals("APPLY")) {
+                        this.applyFriendOrGroupReceive(from_id, from_name, to_id, message, 1);
+                    } else if (messageFlag.equals("DELETE")) {
+
+                    }
+                } else if (messageFlag.equals(CODE.SERVER_REQUEST_FRIEND)) {     // 回应好友请求 标识16#
+                    String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
+                            CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
+                    // 截取发送消息的名称
+                    String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
+                            CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO_ID));
+                    String to_id = str.substring(str.indexOf(CODE.CLIENT_TO_ID) +
+                            CODE.CLIENT_TO_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL));
+                    if (message.equals("AGREE")) {      // 同意
+                        this.agreeReceive(from_id, from_name,to_id,0);
+                    } else if (message.equals("REFUSE")) {   // 拒绝
+                        this.refuseReceive(from_id, from_name ,0);
+                    }
+                } else if (messageFlag.equals(CODE.SERVER_REQUEST_GROUP)) {       // 群请求  标识17#
+                    String from_id = str.substring(str.indexOf(CODE.CLIENT_FROM_ID) +
+                            CODE.CLIENT_FROM_ID.length(), str.indexOf(CODE.CLIENT_FROM_NAME));
+                    // 截取发送消息的名称
+                    String from_name = str.substring(str.indexOf(CODE.CLIENT_FROM_NAME) +
+                            CODE.CLIENT_FROM_NAME.length(), str.indexOf(CODE.CLIENT_TO_ID));
+                    String to_id = str.substring(str.indexOf(CODE.CLIENT_TO_ID) +
+                            CODE.CLIENT_TO_ID.length(), str.indexOf(CODE.MESSAGE_SPLIT_SYMBOL));
+                    if (message.equals("AGREE")) {      // 同意
+                        this.agreeReceive(from_id, from_name,to_id ,1);
+                    } else if (message.equals("REFUSE")) {   // 拒绝
+                        this.refuseReceive(from_id, from_name, 1);
+                    }
                 }
                 System.out.println("客户端接收消息：" + str + "\n");
             }
@@ -322,7 +360,7 @@ public class Message implements Runnable {
     }
 
     /**
-     * 发送加好友h或加群请求请求
+     * 发送加好友或加群请求请求
      *
      * @param id   被添加的id
      * @param type 类型，0是加好友，1是加群
@@ -330,12 +368,13 @@ public class Message implements Runnable {
     public void addFriendOrGroupSend(String id, int type) {
         // FROM_ID:<ID>FROM_NAME:<NUll>TO:<ID>MSG:<NUll>
         String msg = CODE.CLIENT_FROM_ID + user.getId() + CODE.CLIENT_FROM_NAME +
-                user.getName() + CODE.CLIENT_TO_ID + id + CODE.MESSAGE_SPLIT_SYMBOL;
+                user.getName() + CODE.CLIENT_TO_ID + id + CODE.MESSAGE_SPLIT_SYMBOL + "APPLY";
         if (type == 0) {    // 加好友
-            msg = CODE.CLIENT_ADD_FRIEND + msg;
+            msg = CODE.CLIENT_CHANGE_FRIEND + msg;
         } else if (type == 1) {   // 加群
-            msg = CODE.CLIENT_ADD_GROUP + msg;
+            msg = CODE.CLIENT_CHANGE_GROUP + msg;
         }
+        System.out.println(msg);
         this.send(msg);
     }
 
@@ -346,12 +385,74 @@ public class Message implements Runnable {
      * @param from_name
      * @param type
      */
-    public void addFriendOrGroupReceive(String from_id, String from_name, int type) {
+    public void applyFriendOrGroupReceive(String from_id, String from_name, String to_id, String message, int type) {
         if (type == 0) {
             System.out.println(from_name + "(" + from_id + ")，请求添加你为好友");
+            String str = from_name + "(" + from_id + ")，请求添加你为好友";
+            clientUI.createInforMessage(from_id, from_name, to_id, str, 0);
         } else if (type == 1) {
             System.out.println(from_name + "(" + from_id + ")，申请加入群");
+            String str = from_name + "(" + from_id + ")，申请加入群";
+            clientUI.createInforMessage(from_id, from_name, to_id, str, 1);
         }
+        clientUI.getOnlineListPanel().updateUI();   // 刷新
+    }
+
+    public void deleteFriendOrGroupReceive(String from_id, String from_name, String to_id, String message, int type) {
+
+    }
+
+    /**
+     * 发送同意请求
+     *
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param type      类型，0 好友，1 群
+     */
+    public void agreeSend(String from_id, String from_name, String to_id, int type) {
+        String msg = "";
+        if (type == 0) {
+            msg = getMessage(CODE.CLIENT_REQUEST_FRIEND, to_id, from_name, from_id, "AGREE");
+            clientUI.addFriendToList(from_id, type);
+        } else if (type == 1) {
+            msg = getMessage(CODE.CLIENT_REQUEST_GROUP, to_id, from_name, from_id, "AGREE");
+//            clientUI.addFriendToList(from_id, type);
+        }
+        this.send(msg);
+    }
+
+    public void agreeReceive(String from_id, String from_name,String to_id, int type) {
+        String msg = "";
+        if (type == 0) {
+            msg = from_name + "(" + from_id + ")，已同意你的好友申请";
+            clientUI.addFriendToList(from_id, type);
+        } else if (type == 1) {
+            msg = from_name + "(" + from_id + ")，已同意你的群申请";
+            clientUI.addFriendToList(from_id, type);
+        }
+
+        clientUI.createInforMessage(from_id, from_name, "", msg, 3);
+    }
+
+    public void refuseSend(String from_id, String from_name, String to_id, int type) {
+        String msg = "";
+        if (type == 0) {
+            msg = getMessage(CODE.CLIENT_REQUEST_FRIEND, to_id, from_name, from_id, "REFUSE");
+        } else if (type == 1) {
+            msg = getMessage(CODE.CLIENT_REQUEST_GROUP, to_id, from_name, from_id, "REFUSE");
+        }
+        this.send(msg);
+    }
+
+    public void refuseReceive(String from_id, String from_name, int type) {
+        String msg = "";
+        if (type == 0) {
+            msg = from_name + "(" + from_id + ")，已拒绝你的好友申请";
+        } else if (type == 1) {
+            msg = from_name + "(" + from_id + ")，已拒绝你的群申请";
+        }
+        clientUI.createInforMessage(from_id, from_name, "", msg, 3);
     }
 
     /**
@@ -376,6 +477,22 @@ public class Message implements Runnable {
                 csUI.setShowAreaText(msg);
             }
         }
+    }
+
+    /**
+     * 包装服务端消息
+     *
+     * @param code      消息代码指令
+     * @param from_id   发送用户id
+     * @param from_name 发送用户昵称
+     * @param to_id     接收用户id
+     * @param msg       消息内容
+     * @return
+     */
+    public String getMessage(String code, String from_id, String from_name, String to_id, String msg) {
+        String str = code + CODE.CLIENT_FROM_ID + from_id + CODE.CLIENT_FROM_NAME + from_name +
+                CODE.CLIENT_TO_ID + to_id + CODE.MESSAGE_SPLIT_SYMBOL + msg;
+        return str;
     }
 
     /**

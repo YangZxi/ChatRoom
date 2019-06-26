@@ -26,7 +26,6 @@ public abstract class BaseDao {
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException
-     * @throws NamingException
      */
     public Connection getConn() throws SQLException, ClassNotFoundException {
         //加载驱动程序
@@ -119,6 +118,11 @@ public abstract class BaseDao {
             pstmt = conn.prepareStatement(preparedSql);
             int i = 0;
             // 设置SQL语句参数
+            if (params == null) {
+                // 执行SQL语句
+                num = pstmt.executeUpdate();
+                return num;
+            }
             for (Object param : params) {
                 //根据参数的类型分别进行处理
                 if (param instanceof String) {//字符串类型

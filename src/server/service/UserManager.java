@@ -25,7 +25,53 @@ public class UserManager extends BaseDao {
         return users;
     }
 
-    public String[] getGroupFriends(String sql) {
+    public String getUserFriends(String user_id) {
+        String str = null;
+        String sql = "SELECT user_friends FROM Chat_Friend WHERE user_id = \'" + user_id + "\'";
+        ResultSet resultSet = this.execute(sql,null);
+        try {
+            while (resultSet.next()) {
+//                System.out.println(resultSet.getString("user_friends"));
+                str = resultSet.getString("user_friends");
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        return str;
+    }
+
+    public String getUserGroups(String user_id) {
+        String str = null;
+        String sql = "SELECT user_groups FROM Chat_Friend WHERE user_id = \'" + user_id + "\'";
+        ResultSet resultSet = this.execute(sql,null);
+        try {
+            while (resultSet.next()) {
+//                System.out.println(resultSet.getString("user_groups"));
+                str = resultSet.getString("user_groups");
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        return str;
+    }
+
+    public void updateUserFriends(String friends, String user_id) {
+        String sql = "UPDATE `Chat_Friend` SET `user_friends`=\"" + friends + "\" WHERE user_id = \'" + user_id + "\'";
+        this.executeSQL(sql,null);
+    }
+
+    public void updateGroup(String groups,String user_id) {
+        String sql = "UPDATE `Chat_Friend` SET `user_groups`=\"" + groups + "\" WHERE user_id = \'" + user_id + "\'";
+        this.executeSQL(sql,null);
+    }
+
+    public void updateGroupFriend(String friends,String group_id) {
+        String sql = "UPDATE `Chat_Group` SET `group_friends`=\"" + friends + "\" WHERE user_id = \'" + group_id + "\'";
+        this.executeSQL(sql,null);
+    }
+
+    public String getGroupFriends(String to) {
+        String sql = "SELECT group_friends FROM Chat_Group WHERE group_id = \'" + to + "\'";
         String str = null;
         String[] groupFriends_id = null;
         ResultSet resultSet = this.execute(sql,null);
@@ -37,10 +83,7 @@ public class UserManager extends BaseDao {
         }catch (SQLException e) {
             e.getMessage();
         }
-        if (str != null) {
-            groupFriends_id = str.split(",");
-        }
-        return groupFriends_id;
+        return str;
     }
 
     public String getGroupOwner(String group_id) {
@@ -61,7 +104,8 @@ public class UserManager extends BaseDao {
     public static void main(String[] args) {
         UserManager userManager = new UserManager();
 //        userManager.getGroupFriends("SELECT group_friends FROM Chat_Group WHERE group_id = '121234'");
-        userManager.getGroupOwner("121234");
+        String s = userManager.getUserFriends("444444");
+        System.out.println(s);
     }
 
 

@@ -64,6 +64,7 @@ public class AddFriendUI extends JFrame {
 	private JButton reback_btn;
 	private JLabel tip_lbl;
 	private Message message;
+	private JLabel tip_addOK_lbl;
 
 	/**
 	 * Launch the application.
@@ -353,7 +354,10 @@ public class AddFriendUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				String id = user_id;
+				findAfter_panel.add(tip_addOK_lbl);
+				System.out.println(id + "  申请  " + findType);
 				message.addFriendOrGroupSend(id,findType);
+				tip_addOK_lbl.setVisible(true);
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -376,6 +380,12 @@ public class AddFriendUI extends JFrame {
 				findBefore_panel.setVisible(true);
 			}
 		});
+		
+		tip_addOK_lbl = new JLabel("已发送添加申请");
+		tip_addOK_lbl.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+		tip_addOK_lbl.setBounds(130, 105, 120, 18);
+		tip_addOK_lbl.setForeground(new Color(216, 30, 6));
+		
 		reback_btn.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		reback_btn.setBounds(615, 105, 65, 25);
 		reback_btn.setFocusable(false);
@@ -394,13 +404,15 @@ public class AddFriendUI extends JFrame {
 			User user = um.getUser(id);
 			this.user_id = String.valueOf(user.getId());
 			this.user_name = user.getName();
+			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
 			this.name_lbl.setText(user_name);
 		}else if (type == 1) {
 			String group_name = um.getGroupName(id);
 			this.user_id = id;
 			this.user_name = group_name;
+			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
 			this.name_lbl.setText(user_name);
 		}
-		
+		this.tip_addOK_lbl.setVisible(true);
 	}
 }

@@ -40,6 +40,8 @@ public class FriendModel extends JPanel {
 	private ChatShowInputUI csUI = null;
 	private JLabel red_dot;
 
+	private JLabel headIcon;
+
 
 	/**
 	 * Launch the application.
@@ -49,7 +51,7 @@ public class FriendModel extends JPanel {
 			public void run() {
 				try {
 					JFrame jf = new JFrame();
-					FriendModel frame = new FriendModel();
+					FriendModel frame = new FriendModel("111111","不是木易杨",1,null,null);
 					jf.getContentPane().add(frame);
 					jf.setBounds(100,100,500,300);
 					jf.setVisible(true);
@@ -92,12 +94,12 @@ public class FriendModel extends JPanel {
 	}
 
 	public FriendModel(String id, String user_name,int type, ClientUI clientUI, ChatShowInputUI csUI) {
-		init();
 		this.id = id;
 		this.name = user_name;
-		this.personName.setText(user_name);
 		this.clientUI = clientUI;
 		this.csUI = csUI;
+		init();
+		this.personName.setText(user_name);
 		String a = type == 0 ? "离线" : "群聊";
 		onlineStatus.setText(a);
 		this.setVisible(true);
@@ -114,7 +116,10 @@ public class FriendModel extends JPanel {
 				// 隐藏小红点
 				red_dot.setVisible(false);
 				// 显示消息的显示和输入界面
-				System.out.println("显示" + csUI.getStr_Name());
+//				System.out.println("显示" + csUI.getStr_Name());
+				if (clientUI.getBottomRightPanel().isVisible() == true) {
+					clientUI.getBottomRightPanel().setVisible(false);
+				}
 				clientUI.getBottomPanel().remove(clientUI.getBottomRightPanel());
 				if (clientUI.getChatShowInputUI() != null) {
 					clientUI.getChatShowInputUI().setVisible(false);
@@ -145,12 +150,13 @@ public class FriendModel extends JPanel {
 		this.setBounds(0, 0, 310, 70);
 		this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(179, 179, 179)));
 		this.setLayout(null);
-		// 好友头像
-		JLabel personIcon = new JLabel("头像");
-		personIcon.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-		personIcon.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(179, 179, 179)));
-		personIcon.setBounds(15, 10, 50, 50);
-		this.add(personIcon);
+		
+		headIcon = new JLabel("头像");
+		headIcon.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/" + id + ".jpg")));
+		headIcon.setFont(new Font("微软雅黑", Font.PLAIN, 18));
+		headIcon.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(179, 179, 179)));
+		headIcon.setBounds(15, 10, 50, 50);
+		this.add(headIcon);
 		// 好友名称
 		personName = new JLabel("新加入好友新加入好友");
 		personName.setFont(new Font("微软雅黑", Font.PLAIN, 18));

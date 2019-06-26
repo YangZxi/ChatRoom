@@ -21,6 +21,7 @@ package client.ui;
 
 import client.model.FriendModel;
 import client.model.Group;
+import client.model.InforModel;
 import client.model.User;
 
 import client.service.UserManager;
@@ -48,6 +49,8 @@ public class ClientUI extends JFrame {
 
     private int mouseAtX = 0;    // 鼠标x轴
     private int mouseAtY = 0;    // 鼠标y轴
+    
+    private int inforMsgNum = 0;
 
     private Color topButtonColor = new Color(66, 73, 153);
     private Color FONT_COLOR = new Color(51, 51, 51);
@@ -59,14 +62,15 @@ public class ClientUI extends JFrame {
 
     private Message message = null;
     private Socket socket = null;
+    private UserManager userManager = new UserManager();
     private User user = null;       // 登录的用户信息
     private boolean onlineStatus = false;   // 上线状态
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
     private StringBuffer myFriendsID = null;    // 所有好友ID
     private StringBuffer myGroupsID = null;     // 所有群ID
-    //    private ArrayList<JPanel> personList = new ArrayList<JPanel>();
-    private HashMap<FriendModel, ChatShowInputUI> personList = new HashMap<FriendModel, ChatShowInputUI>();
+    private ArrayList<InforModel> inforMessageList = new ArrayList<InforModel>();   // 消息通知列表
+    private HashMap<FriendModel, ChatShowInputUI> personList = new HashMap<FriendModel, ChatShowInputUI>();     // 好友列表和聊天界面
     private Set set = null;
     private Iterator it = null;
 
@@ -82,6 +86,10 @@ public class ClientUI extends JFrame {
     private AddFriendUI addFriendUI;
     private int ADDFRIENDUI_WIDTH = 0;
     private int ADDFRIENDUI_HEIGHT = 0;
+	private JPanel infor_Panel;
+	private JPanel b_r_childPanel;
+	private JPanel inforInner_Panel;
+	private JLabel red_dot;
 
     /**
      * Launch the application.
@@ -403,21 +411,68 @@ public class ClientUI extends JFrame {
                 }
                 addFriendUI.setLocationRelativeTo(clientUI);
                 addFriendUI.setVisible(true);
+                red_dot.setVisible(false);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
+                addFriendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend_1.png")));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 super.mouseExited(e);
+                addFriendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend.png")));
             }
         });
+        
         addFriendLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/add_friend.png")));
         addFriendLabel.setBounds(250, 10, 40, 40);
         botLeftBottomPanel.add(addFriendLabel);
+
+        red_dot = new JLabel("");
+        red_dot.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/red_dot.png")));
+        red_dot.setBounds(220, 5, 16, 16);
+        red_dot.setVisible(false);
+        botLeftBottomPanel.add(red_dot);
+
+        JLabel inforLabel = new JLabel("");
+        inforLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (chatShowInputUI != null) {
+                	bottomPanel.remove(chatShowInputUI);
+                }
+                if (b_r_childPanel != null) {
+                    bottomRightPanel.remove(b_r_childPanel);
+                	b_r_childPanel = null;
+                }
+                if (bottomRightPanel.isVisible() == false) {
+                	bottomRightPanel.setVisible(true);
+                	bottomPanel.add(bottomRightPanel);
+                }
+                red_dot.setVisible(false);
+                bottomPanel.updateUI();
+                infor_Panel.setVisible(true);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                inforLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/infor_1.png")));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                inforLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/infor.png")));
+            }
+        });
+        inforLabel.setIcon(new ImageIcon(ClientUI.class.getResource("/client/images/infor.png")));
+        inforLabel.setBounds(186, 10, 40, 40);
+        botLeftBottomPanel.add(inforLabel);
 
         bottomRightPanel = new JPanel();
         bottomRightPanel.setBackground(Color.PINK);
@@ -425,7 +480,7 @@ public class ClientUI extends JFrame {
         bottomRightPanel.setBounds(310, 0, 840, 680);
         bottomPanel.add(bottomRightPanel);
 
-        JPanel b_r_childPanel = new JPanel();
+        b_r_childPanel = new JPanel();
         b_r_childPanel.setBounds(0, 0, 840, 680);
         bottomRightPanel.add(b_r_childPanel);
         b_r_childPanel.setLayout(null);
@@ -434,6 +489,29 @@ public class ClientUI extends JFrame {
         b_r_childTitel.setFont(new Font("微软雅黑", Font.BOLD, 22));
         b_r_childTitel.setBounds(335, 180, 203, 40);
         b_r_childPanel.add(b_r_childTitel);
+        
+        infor_Panel = new JPanel();
+        infor_Panel.setBounds(0, 0, 840, 680);
+        infor_Panel.setVisible(false);
+        bottomRightPanel.add(infor_Panel);
+        infor_Panel.setLayout(null);
+        
+        JLabel lblNewLabel = new JLabel("消息通知");
+        lblNewLabel.setFont(new Font("微软雅黑", Font.PLAIN, 22));
+        lblNewLabel.setBounds(20, 10, 90, 25);
+        infor_Panel.add(lblNewLabel);
+        
+        inforInner_Panel = new JPanel();
+        inforInner_Panel.setPreferredSize(new Dimension(840, 600));
+        inforInner_Panel.setLayout(null);
+        
+        JScrollPane infor_scrollPane = new JScrollPane(inforInner_Panel);
+        infor_scrollPane.setBounds(0, 45, 840, 635);
+        infor_Panel.add(infor_scrollPane);
+        infor_scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        infor_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        infor_scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        infor_scrollPane.setBorder(null);
 
 //        chatShowInputUI = new ChatShowInputUI();
 //        bottomPanel.add(chatShowInputUI);
@@ -443,7 +521,6 @@ public class ClientUI extends JFrame {
      * 加载好友
      */
     public void loadFriendList(int type) throws SQLException {
-        UserManager userManager = new UserManager();
         ArrayList<Object> friends = userManager.getFriends(String.valueOf(this.user.getId()));
         if (friends == null) return;
 //        System.out.println("hhh");
@@ -479,10 +556,70 @@ public class ClientUI extends JFrame {
                 // 添加到myFriendsID
                 myGroupsID.append(strID + ",");
             }
-//            System.out.println("id" + strID);     // 验证数据
-//            System.out.println("昵称" + strName);   // 验证数据
         }
 //        System.out.println(myFriendsID.toString());
+    }
+
+    /**
+     * 同意以后加载进好友列表
+     * @param id
+     * @param type
+     */
+    public void addFriendToList(String id,int type) {
+        if (type == 0) {
+            User user = userManager.getUser(id);
+            String strID = String.valueOf(user.getId());
+            String strName = user.getName();
+            ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 0, message);     // 聊天界面
+            FriendModel person = new FriendModel(strID, strName, 0, this, csUI);    // 左侧好友列表的好友
+            person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
+            // 添加进好友Map集合
+            this.personList.put(person, csUI);
+            // 添加到主界面
+            this.onlineListPanel.add(person);      // 好友面板添加进界面
+            // 添加到myFriendsID
+            myFriendsID.append(strID + ",");
+        }else if (type == 1) {
+            Group group = userManager.getGroup(id);
+            String strID = String.valueOf(group.getGroup_id());
+            String strName = group.getGroup_name();
+            ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 1, message);     // 聊天界面
+            FriendModel person = new FriendModel(strID, strName, 1, this, csUI);    // 左侧好友列表的好友
+            person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
+            // 添加进好友Map集合
+            this.personList.put(person, csUI);
+            // 添加到主界面
+            this.onlineListPanel.add(person);      // 好友面板添加进界面
+            // 添加到myFriendsID
+            myGroupsID.append(strID + ",");
+        }
+    }
+
+    /**
+     * 创建消息通知
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param msg
+     * @param type
+     */
+    public void createInforMessage(String from_id,String from_name,String to_id,String msg,int type) {
+        InforModel inforModel = new InforModel(from_id,from_name,to_id,type);
+        this.inforInner_Panel.add(inforModel);
+        inforModel.setMessage(message);
+        inforModel.getInfor_lbl().setText(msg);
+        inforModel.setBounds(20,inforMsgNum * 70 +5,800,70);
+        if (infor_Panel.isVisible() == false) {
+            red_dot.setVisible(true);
+        } else {
+            red_dot.setVisible(false);
+        }
+        inforMsgNum++;
+        this.inforMessageList.add(inforModel);
+    }
+
+    public void changeInforMessage() {
+
     }
 
     public static void main(String[] args) {
