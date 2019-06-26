@@ -341,6 +341,9 @@ public class Message implements Runnable {
             group_friends = group_friends + to_id + ",";
             userManager.updateGroupFriend(group_friends,from_id);
             String user_groups = userManager.getUserGroups(to_id);
+            if (user_groups == null || user_groups.equals("null")) {
+                user_groups = "";
+            }
             user_groups = user_groups + from_id +",";
             userManager.updateGroup(user_groups,to_id);
             msg = getMessage(CODE.SERVER_REQUEST_GROUP,from_id,from_name,to_id,message);

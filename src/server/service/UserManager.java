@@ -66,7 +66,7 @@ public class UserManager extends BaseDao {
     }
 
     public void updateGroupFriend(String friends,String group_id) {
-        String sql = "UPDATE `Chat_Group` SET `group_friends`=\"" + friends + "\" WHERE user_id = \'" + group_id + "\'";
+        String sql = "UPDATE `Chat_Group` SET `group_friends`=\"" + friends + "\" WHERE group_id = \'" + group_id + "\'";
         this.executeSQL(sql,null);
     }
 

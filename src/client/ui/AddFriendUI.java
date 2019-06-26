@@ -46,11 +46,13 @@ public class AddFriendUI extends JFrame {
 	private JButton findFriend_btn;
 	private JLabel find_friend_lbl;
 	private JLabel find_group_lbl;
+	private JLabel create_group_lbl;
 
 	private int findType = 0;
 	private String headIcon;
 	private String user_id;
 	private String user_name;
+	private Message message;
 
 	private int mouseAtX = 0; // 鼠标x轴
 	private int mouseAtY = 0; // 鼠标y轴
@@ -63,8 +65,8 @@ public class AddFriendUI extends JFrame {
 	private JLabel add_lbl;
 	private JButton reback_btn;
 	private JLabel tip_lbl;
-	private Message message;
 	private JLabel tip_addOK_lbl;
+	private CreateGroupUI createGroupUI;
 
 	/**
 	 * Launch the application.
@@ -73,7 +75,7 @@ public class AddFriendUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddFriendUI a = new AddFriendUI(null);
+					AddFriendUI a = new AddFriendUI();
 					a.setType(JFrame.Type.UTILITY);
 					a.setVisible(true);
 				} catch (Exception e) {
@@ -86,7 +88,12 @@ public class AddFriendUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddFriendUI(Message message) {
+	public AddFriendUI() {
+		this.init();
+	}
+
+	public AddFriendUI(String user_id,Message message) {
+		this.user_id = user_id;
 		this.message = message;
 		this.init();
 		// 圆角
@@ -158,9 +165,9 @@ public class AddFriendUI extends JFrame {
 
 		mainPanel.add(this.getFindBefore_panel());
 		findBefore_panel.setVisible(true);
-		mainPanel.add(this.getFindAfter_panel());
+		mainPanel.add(getFindAfter_panel());
 		findAfter_panel.setVisible(false);
-
+		
 	}
 
 	public JPanel getFindBefore_panel() {
@@ -171,7 +178,7 @@ public class AddFriendUI extends JFrame {
 		findBefore_panel.setLayout(null);
 
 		find_friend_lbl = new JLabel("找朋友");
-		find_friend_lbl.setBounds(240, 0, 60, 35);
+		find_friend_lbl.setBounds(180, 0, 60, 35);
 		findBefore_panel.add(find_friend_lbl);
 		find_friend_lbl.addMouseListener(new MouseAdapter() {
 			@Override
@@ -206,7 +213,7 @@ public class AddFriendUI extends JFrame {
 		find_friend_lbl.setForeground(new Color(78, 129, 151));
 
 		find_group_lbl = new JLabel("找群组");
-		find_group_lbl.setBounds(395, 0, 60, 35);
+		find_group_lbl.setBounds(315, 0, 60, 35);
 		findBefore_panel.add(find_group_lbl);
 		find_group_lbl.addMouseListener(new MouseAdapter() {
 			@Override
@@ -238,6 +245,36 @@ public class AddFriendUI extends JFrame {
 			}
 		});
 		find_group_lbl.setFont(new Font("微软雅黑", Font.BOLD, 20));
+		
+		create_group_lbl = new JLabel("创建群");
+		create_group_lbl.setBounds(450, 0, 60, 35);
+		findBefore_panel.add(create_group_lbl);
+		create_group_lbl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (createGroupUI == null) {
+					createGroupUI = new CreateGroupUI(user_id,message);
+				}
+				createGroupUI.setLocationRelativeTo(null);
+				createGroupUI.setVisible(true);
+				dispose();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				super.mouseEntered(e);
+				create_group_lbl.setForeground(new Color(78, 129, 151));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				super.mouseExited(e);
+				create_group_lbl.setForeground(Color.BLACK);
+			}
+		});
+		create_group_lbl.setFont(new Font("微软雅黑", Font.BOLD, 20));
+
 
 		JPanel panel = new JPanel();
 		panel.setBounds(25, 46, 550, 50);
@@ -355,7 +392,7 @@ public class AddFriendUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				String id = user_id;
-				findAfter_panel.add(tip_addOK_lbl);
+//				findAfter_panel.add(tip_addOK_lbl);
 				tip_addOK_lbl.setVisible(true);
 //				System.out.println(id + "  申请  " + findType);
 				message.addFriendOrGroupSend(id,findType);
@@ -387,6 +424,8 @@ public class AddFriendUI extends JFrame {
 		tip_addOK_lbl.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		tip_addOK_lbl.setBounds(130, 105, 120, 18);
 		tip_addOK_lbl.setForeground(new Color(216, 30, 6));
+		tip_addOK_lbl.setVisible(true);
+//		findAfter_panel.add(tip_addOK_lbl);
 
 		reback_btn.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		reback_btn.setBounds(615, 105, 65, 25);

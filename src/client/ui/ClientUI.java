@@ -407,7 +407,7 @@ public class ClientUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (addFriendUI == null) {
-                    addFriendUI = new AddFriendUI(message);
+                    addFriendUI = new AddFriendUI(user.getId(),message);
                 }
                 addFriendUI.setLocationRelativeTo(clientUI);
                 addFriendUI.setVisible(true);
@@ -563,7 +563,7 @@ public class ClientUI extends JFrame {
     /**
      * 同意以后加载进好友列表
      * @param id
-     * @param type
+     * @param type  0 好友，1 群
      */
     public void addFriendToList(String id,int type) {
         if (type == 0) {

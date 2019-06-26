@@ -53,6 +53,10 @@ public class Message implements Runnable {
         return user;
     }
 
+    public ClientUI getClientUI() {
+        return clientUI;
+    }
+
     public Message() {
     }
 

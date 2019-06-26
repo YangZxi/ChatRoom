@@ -57,9 +57,23 @@ public class UserManager extends BaseDao {
             if (result_num > 0) flag = true;
             String sql1 = "INSERT INTO `Chat_Friend` (`user_id`, `user_friends`, `user_groups`) " +
                     "VALUES ('" + user.getId() + "', NULL, NULL);";
-            this.executeSQL(sql1,null);
+            this.executeSQL(sql1, null);
         }
         System.out.println(flag);
+        return flag;
+    }
+
+    public boolean createGroup(String group_name, String user_id) {
+        boolean flag = false;
+        String sql = "INSERT INTO `Chat_Group` (`group_id`, `group_name`, `group_friends`, "
+                + " `user_id`) VALUES ('535251', ?, ?, ?)";
+        ArrayList<String> groups = new ArrayList<>();
+        groups.add(group_name);
+        groups.add(user_id + ",");
+        groups.add(user_id);
+        int result_num = this.executeSQL(sql, groups);
+        System.out.println("创建成功！" + result_num);
+        if (result_num > 0) flag = true;
         return flag;
     }
 
@@ -225,19 +239,7 @@ public class UserManager extends BaseDao {
 
     public static void main(String[] args) throws SQLException {
         UserManager u = new UserManager();
-        User user = new User();
-        user.setId("123321");
-        user.setName("测试创建");
-        user.setProvince("湖南");
-        user.setPassword("admin");
-        user.setPhone("");
-        user.setSex("");
-        user.setHobby("");
-        try {
-            u.createUser(user);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        u.createGroup("创建测试", "123456");
 //        u.getUserFriends("666666");
     }
 }
