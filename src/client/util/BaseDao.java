@@ -136,6 +136,11 @@ public abstract class BaseDao {
             conn = getConn();
             pstmt = conn.prepareStatement(preparedSql);
             int i = 0;
+            if (params == null) {
+                // 执行SQL语句
+                num = pstmt.executeUpdate();
+                return num;
+            }
             // 设置SQL语句参数
             for (Object param : params) {
                 //根据参数的类型分别进行处理

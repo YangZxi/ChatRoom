@@ -135,6 +135,7 @@ public class AddFriendUI extends JFrame {
 		close_btn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				findAfter_panel.remove(tip_addOK_lbl);
 				dispose();
 			}
 
@@ -355,9 +356,9 @@ public class AddFriendUI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				String id = user_id;
 				findAfter_panel.add(tip_addOK_lbl);
-				System.out.println(id + "  申请  " + findType);
-				message.addFriendOrGroupSend(id,findType);
 				tip_addOK_lbl.setVisible(true);
+//				System.out.println(id + "  申请  " + findType);
+				message.addFriendOrGroupSend(id,findType);
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -376,6 +377,7 @@ public class AddFriendUI extends JFrame {
 		reback_btn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				findAfter_panel.remove(tip_addOK_lbl);
 				findAfter_panel.setVisible(false);
 				findBefore_panel.setVisible(true);
 			}
@@ -385,7 +387,7 @@ public class AddFriendUI extends JFrame {
 		tip_addOK_lbl.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		tip_addOK_lbl.setBounds(130, 105, 120, 18);
 		tip_addOK_lbl.setForeground(new Color(216, 30, 6));
-		
+
 		reback_btn.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 		reback_btn.setBounds(615, 105, 65, 25);
 		reback_btn.setFocusable(false);

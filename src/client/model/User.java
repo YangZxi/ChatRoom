@@ -20,7 +20,7 @@ package client.model;
  */
 public class User {
     // 用户属性
-    private int id;
+    private String id;
     private String name;
     private String phone;
     private String password;
@@ -32,7 +32,7 @@ public class User {
 
     public User(){}
 
-    public User(int id, String name, String phone, String password, String birthday, String sex, String hobby, String province) {
+    public User(String id, String name, String phone, String password, String birthday, String sex, String hobby, String province) {
         this.id = id;   // 标识ID
         this.name = name;   // 昵称
         this.phone = phone;     // 手机号（用户名）
@@ -43,11 +43,11 @@ public class User {
         this.province = province;   // 籍贯
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

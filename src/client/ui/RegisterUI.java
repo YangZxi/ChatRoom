@@ -30,7 +30,7 @@ public class RegisterUI extends JFrame {
 
     private JPanel contentPane;
     private final ButtonGroup sexGroup = new ButtonGroup();
-    private JTextField userName;
+    private JTextField userId;
     private JPasswordField password;
     private JPasswordField passwordComfirm;
     private LoginUI login;
@@ -41,6 +41,8 @@ public class RegisterUI extends JFrame {
     private JCheckBox chkHobby2;
     private JCheckBox chkHobby3;
     private JScrollPane scrollPane;
+    private JLabel label_6;
+    private JTextField userName;
 
     /**
      * Launch the application.
@@ -76,7 +78,7 @@ public class RegisterUI extends JFrame {
 
     public void init() {
         setTitle("注册");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginUI.class.getResource("/images/icon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginUI.class.getResource("/client/images/icon.png")));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 550, 450);
         contentPane = new JPanel();
@@ -96,81 +98,81 @@ public class RegisterUI extends JFrame {
         label_1.setBounds(33, 52, 87, 30);
         contentPane.add(label_1);
 
-        userName = new JTextField();
-        userName.setBounds(111, 50, 200, 35);
-        contentPane.add(userName);
-        userName.setColumns(10);
+        userId = new JTextField();
+        userId.setBounds(111, 50, 200, 35);
+        contentPane.add(userId);
+        userId.setColumns(10);
 
         // 密码
         JLabel label_2 = new JLabel("密    码：");
         label_2.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        label_2.setBounds(33, 95, 87, 30);
+        label_2.setBounds(33, 132, 87, 30);
         contentPane.add(label_2);
 
         password = new JPasswordField();
-        password.setBounds(111, 95, 200, 35);
+        password.setBounds(111, 131, 200, 35);
         contentPane.add(password);
 
         // 确认密码
         JLabel label_3 = new JLabel("确认密码：");
         label_3.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        label_3.setBounds(33, 138, 87, 30);
+        label_3.setBounds(33, 175, 87, 30);
         contentPane.add(label_3);
 
         passwordComfirm = new JPasswordField();
-        passwordComfirm.setBounds(111, 138, 200, 35);
+        passwordComfirm.setBounds(111, 174, 200, 35);
         contentPane.add(passwordComfirm);
 
         // 性别
         JLabel label_4 = new JLabel("性    别：");
         label_4.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        label_4.setBounds(33, 181, 87, 30);
+        label_4.setBounds(33, 218, 87, 30);
         contentPane.add(label_4);
 
         rdMale = new JRadioButton("男");
         rdMale.setFont(new Font("微软雅黑", Font.PLAIN, 16));
         sexGroup.add(rdMale);
         rdMale.setFocusPainted(true);
-        rdMale.setBounds(111, 178, 62, 37);
+        rdMale.setBounds(111, 215, 62, 37);
         contentPane.add(rdMale);
 
         rdFemale = new JRadioButton("女");
         rdFemale.setFont(new Font("微软雅黑", Font.PLAIN, 16));
         sexGroup.add(rdFemale);
-        rdFemale.setBounds(199, 178, 62, 37);
+        rdFemale.setBounds(194, 215, 62, 37);
         contentPane.add(rdFemale);
 
         // 爱好
         JLabel label_5 = new JLabel("爱    好：");
         label_5.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        label_5.setBounds(33, 224, 87, 30);
+        label_5.setBounds(33, 261, 87, 30);
         contentPane.add(label_5);
 
         chkHobby1 = new JCheckBox("编程");
         chkHobby1.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        chkHobby1.setBounds(111, 221, 62, 37);
+        chkHobby1.setBounds(111, 254, 62, 37);
         contentPane.add(chkHobby1);
 
         chkHobby2 = new JCheckBox("旅游");
         chkHobby2.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        chkHobby2.setBounds(181, 221, 62, 37);
+        chkHobby2.setBounds(179, 254, 62, 37);
         contentPane.add(chkHobby2);
 
         chkHobby3 = new JCheckBox("游戏");
         chkHobby3.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        chkHobby3.setBounds(249, 221, 62, 37);
+        chkHobby3.setBounds(247, 254, 62, 37);
         contentPane.add(chkHobby3);
 
         // 籍贯
         JLabel label_jg = new JLabel("籍    贯：");
         label_jg.setFont(new Font("微软雅黑", Font.PLAIN, 16));
-        label_jg.setBounds(33, 271, 87, 30);
+        label_jg.setBounds(33, 304, 87, 30);
         contentPane.add(label_jg);
 
         cbProvince = new JComboBox();
         cbProvince.setFont(new Font("微软雅黑", Font.PLAIN, 16));
         cbProvince.setModel(new DefaultComboBoxModel(new String[]{"--请选择--", "湖南", "湖北", "江西"}));
-        cbProvince.setBounds(111, 269, 200, 35);
+        cbProvince.setBounds(111, 302, 200, 35);
         contentPane.add(cbProvince);
 
         scrollPane = new JScrollPane();
@@ -200,7 +202,7 @@ public class RegisterUI extends JFrame {
         btnReset.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent arg0) {
-                userName.setText("");
+                userId.setText("");
                 password.setText("");
                 passwordComfirm.setText("");
                 rdMale.setSelected(false);
@@ -216,6 +218,16 @@ public class RegisterUI extends JFrame {
         btnReset.setBounds(315, 348, 153, 37);
         btnReset.setBackground(Color.lightGray);
         contentPane.add(btnReset);
+        
+        label_6 = new JLabel("昵称：");
+        label_6.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        label_6.setBounds(33, 90, 87, 30);
+        contentPane.add(label_6);
+        
+        userName = new JTextField();
+        userName.setColumns(10);
+        userName.setBounds(111, 90, 200, 35);
+        contentPane.add(userName);
 
         // 重写默认关闭方法
         addWindowListener(new WindowAdapter() {
@@ -228,10 +240,13 @@ public class RegisterUI extends JFrame {
         });
     }
 
-    // 注册按钮
+    // 注册事件
     public void registerButton() {
         Boolean flag = true;
         // 获取用户名
+        String strUserId = this.userId.getText().trim();
+        System.out.println("用户名：" + strUserId);
+        // 获取昵称
         String strUserName = this.userName.getText().trim();
         System.out.println("用户名：" + strUserName);
         // 获取密码
@@ -282,7 +297,9 @@ public class RegisterUI extends JFrame {
             User user = new User();
             //在对话框中显示用户输入的数据
             String msg = "请确认你的注册信息:";
-            msg += "\n用户名：" + strUserName;
+            msg += "\n用户名：" + strUserId;
+            user.setId(strUserId);
+            msg += "\n昵称：" + strUserName;
             user.setName(strUserName);
             msg += "\n密  码：" + strPassWord;
             user.setPassword(strPassWord);
@@ -296,9 +313,9 @@ public class RegisterUI extends JFrame {
 
             // 执行数据库，插入新用户
             UserManager userManager = new UserManager();
-            boolean isCreateUser = true;
+            boolean isCreateUser = false;
             try {
-//                isCreateUser = userManager.createUser(user);
+                isCreateUser = userManager.createUser(user);
             } catch (Exception e) {
                 e.printStackTrace();
             }

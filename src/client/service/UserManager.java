@@ -42,9 +42,25 @@ public class UserManager extends BaseDao {
     public boolean createUser(User user) throws SQLException, ClassNotFoundException {
         boolean flag = this.getUserByName(user.getName());
         if (flag == false) {    // 没有用户注册
-
+            String sql = "INSERT INTO `Chat_User` (`user_id`, `user_name`, "
+                    + " `user_password`, `user_sex`, `user_hobby`, `user_province`) "
+                    + "VALUES (?, ?, ?, ?, ?, ?)";
+            ArrayList users = new ArrayList();
+            users.add(user.getId());
+            users.add(user.getName());
+            users.add(user.getPassword());
+            users.add(user.getSex());
+            users.add(user.getHobby());
+            users.add(user.getProvince());
+            int result_num = this.executeSQL(sql, users);
+            System.out.println("创建成功！" + result_num);
+            if (result_num > 0) flag = true;
+            String sql1 = "INSERT INTO `Chat_Friend` (`user_id`, `user_friends`, `user_groups`) " +
+                    "VALUES ('" + user.getId() + "', NULL, NULL);";
+            this.executeSQL(sql1,null);
         }
-        return true;
+        System.out.println(flag);
+        return flag;
     }
 
     /**
@@ -140,33 +156,14 @@ public class UserManager extends BaseDao {
      */
     public boolean getUserByName(String userName) throws SQLException {
         boolean flag = false;
-//        baseDao.getConn();   // 连接
-//        String sql = "SELECT * FROM `chat_user` WHERE user_phone = \" + \"'\" + phone + \"'\"";
         String sql = "SELECT * FROM `Chat_User` WHERE user_name = ?";
-//        baseDao.setPreparedStatement(baseDao.getConnection().prepareStatement(sql));
-//        baseDao.getPreparedStatement().setString(1,userName);
-//        baseDao.setResultSet(baseDao.getPreparedStatement().executeQuery());
-//        while (baseDao.getResultSet().next()) {
-//            System.out.println("数据库已有用户，密码是："+baseDao.getResultSet().getString("user_password"));
-//            user = new User();
-//            user.setId(connectSQL.getResultSet().getInt("user_id"));
-//            user.setName(connectSQL.getResultSet().getString("user_name"));
-//            user.setPhone(connectSQL.getResultSet().getString("user_phone"));
-//            user.setBirthday(connectSQL.getResultSet().getString("user_birthday"));
-//            user.setPassword(connectSQL.getResultSet().getString("user_password"));
-//            user.setSex(connectSQL.getResultSet().getString("user_sex"));
-//            user.setHobby(connectSQL.getResultSet().getString("user_hobby"));
-//            user.setProvince(connectSQL.getResultSet().getString("user_province"));
         ArrayList<String> arrayList = new ArrayList<String>();
         arrayList.add(userName);
         ResultSet resultSet = this.execute(sql, arrayList);
         while (resultSet.next()) {
             System.out.println(resultSet.getString("user_password"));
+            flag = true;
         }
-        flag = true;
-//        }
-//        baseDao.closeAll(); // 关闭
-        this.closeAll();
         return flag;
     }
 
@@ -206,7 +203,7 @@ public class UserManager extends BaseDao {
         while (rs.next()) {
             if (rs.getInt("type") == 0) {  // 0表示User
                 User user = new User();
-                user.setId(rs.getInt("user_id"));
+                user.setId(rs.getString("user_id"));
                 user.setName(rs.getString("user_name"));
                 user.setHobby(rs.getString("user_hobby"));
                 user.setSex(rs.getString("user_sex"));
@@ -228,7 +225,19 @@ public class UserManager extends BaseDao {
 
     public static void main(String[] args) throws SQLException {
         UserManager u = new UserManager();
-        u.getGroup("121234");
+        User user = new User();
+        user.setId("123321");
+        user.setName("测试创建");
+        user.setProvince("湖南");
+        user.setPassword("admin");
+        user.setPhone("");
+        user.setSex("");
+        user.setHobby("");
+        try {
+            u.createUser(user);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 //        u.getUserFriends("666666");
     }
 }

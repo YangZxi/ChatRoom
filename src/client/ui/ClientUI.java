@@ -618,10 +618,6 @@ public class ClientUI extends JFrame {
         this.inforMessageList.add(inforModel);
     }
 
-    public void changeInforMessage() {
-
-    }
-
     public static void main(String[] args) {
         ClientUI c = new ClientUI();
         c.setClientUI(c);

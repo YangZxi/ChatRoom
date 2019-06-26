@@ -404,7 +404,6 @@ public class Message implements Runnable {
 
     /**
      * 发送同意请求
-     *
      * @param from_id
      * @param from_name
      * @param to_id
@@ -415,6 +414,7 @@ public class Message implements Runnable {
         if (type == 0) {
             msg = getMessage(CODE.CLIENT_REQUEST_FRIEND, to_id, from_name, from_id, "AGREE");
             clientUI.addFriendToList(from_id, type);
+            clientUI.getOnlineListPanel().updateUI();   // 刷新
         } else if (type == 1) {
             msg = getMessage(CODE.CLIENT_REQUEST_GROUP, to_id, from_name, from_id, "AGREE");
 //            clientUI.addFriendToList(from_id, type);
@@ -422,6 +422,13 @@ public class Message implements Runnable {
         this.send(msg);
     }
 
+    /**
+     * 同意请求接收
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param type
+     */
     public void agreeReceive(String from_id, String from_name,String to_id, int type) {
         String msg = "";
         if (type == 0) {
@@ -431,10 +438,17 @@ public class Message implements Runnable {
             msg = from_name + "(" + from_id + ")，已同意你的群申请";
             clientUI.addFriendToList(from_id, type);
         }
-
+        clientUI.getOnlineListPanel().updateUI();
         clientUI.createInforMessage(from_id, from_name, "", msg, 3);
     }
 
+    /**
+     * 拒绝请求发送
+     * @param from_id
+     * @param from_name
+     * @param to_id
+     * @param type
+     */
     public void refuseSend(String from_id, String from_name, String to_id, int type) {
         String msg = "";
         if (type == 0) {
@@ -445,6 +459,12 @@ public class Message implements Runnable {
         this.send(msg);
     }
 
+    /**
+     * 拒绝请求接收
+     * @param from_id
+     * @param from_name
+     * @param type
+     */
     public void refuseReceive(String from_id, String from_name, int type) {
         String msg = "";
         if (type == 0) {
