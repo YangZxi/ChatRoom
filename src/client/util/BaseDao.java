@@ -35,7 +35,7 @@ public abstract class BaseDao {
     public static final String DBPASS ="chat123456";
     //分页大小
     //public static final int PAGESIZE = 20;
-    private Connection conn = null;//数据库连接
+    protected Connection conn = null;//数据库连接
     protected PreparedStatement pstmt = null;
     protected ResultSet rs = null;
 

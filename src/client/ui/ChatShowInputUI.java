@@ -37,9 +37,12 @@ public class ChatShowInputUI extends JPanel {
     private JTextArea inputArea;
     private JTextArea showArea;
     private JLabel chatPersonName;
+    private JPanel groupFriendsPanel_inner;
 
     private String str_Id = null;   // 接收消息的用户id or 群id
     private String str_name = null; // 接收消息的用户名称 or 群名称
+    private String group_friends = null;
+    private int group_friend_num = 0;   // 在线人数
     private Message message = null;
     private ChatInstructionCode CODE = new ChatInstructionCode();
 
@@ -51,12 +54,32 @@ public class ChatShowInputUI extends JPanel {
         return showArea;
     }
 
+    public JPanel getGroupFriendsPanel_inner() {
+        return groupFriendsPanel_inner;
+    }
+
     public String getStr_Id() {
         return str_Id;
     }
 
     public String getStr_Name() {
         return str_name;
+    }
+
+    public String getGroup_friends() {
+        return group_friends;
+    }
+
+    public void setGroup_friends(String group_friends) {
+        this.group_friends = group_friends;
+    }
+
+    public int getGroup_friend_num() {
+        return group_friend_num;
+    }
+
+    public void setGroup_friend_num(int group_friend_num) {
+        this.group_friend_num = group_friend_num;
     }
 
     public ChatShowInputUI() {
@@ -301,6 +324,7 @@ public class ChatShowInputUI extends JPanel {
       sendButton.setBounds(590, 590, 70, 35);
       chatAreaPanel.add(sendButton);
 
+      // 群信息面板
       JPanel groupInformationPanel = new JPanel();
       groupInformationPanel.setBounds(670, 45, 170, 635);
       groupInformationPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(179, 179, 179)));
@@ -312,12 +336,14 @@ public class ChatShowInputUI extends JPanel {
       groupInformationPanel.add(informationPanel);
       informationPanel.setLayout(null);
 
+      // 通知面板
       JLabel informationTitle = new JLabel("暂时没有新通知");
       informationTitle.setHorizontalAlignment(SwingConstants.CENTER);
       informationTitle.setFont(new Font("微软雅黑", Font.PLAIN, 16));
       informationTitle.setBounds(5, 160, 150, 18);
       informationPanel.add(informationTitle);
 
+      // 好友面板
       JPanel groupFriendsPanel = new JPanel();
       groupFriendsPanel.setBounds(0, 205, 170, 425);
       groupFriendsPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(179, 179, 179)));
@@ -330,8 +356,8 @@ public class ChatShowInputUI extends JPanel {
       lblNewLabel.setBounds(5, 0, 160, 25);
       groupFriendsPanel.add(lblNewLabel);
 
-      // 内部好友列表
-      JPanel groupFriendsPanel_inner = new JPanel();
+      // 内部好友面板，会添加群成员
+      groupFriendsPanel_inner = new JPanel();
       groupFriendsPanel_inner.setPreferredSize(new Dimension(160, 100));
       groupFriendsPanel_inner.setLayout(null);
 

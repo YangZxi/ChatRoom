@@ -39,6 +39,7 @@ public class CreateGroupUI extends JFrame {
 
 	private String user_id;
 	private Message message;
+	private int group_id;
 
 	private JPanel contentPane;
 	private JTextField textField;
@@ -49,6 +50,7 @@ public class CreateGroupUI extends JFrame {
 	public static void main(String[] args) {
 		CreateGroupUI c = new CreateGroupUI();
 		c.setVisible(true);
+
 	}
 
 	public CreateGroupUI() {
@@ -165,7 +167,7 @@ public class CreateGroupUI extends JFrame {
 		create_btn.setBackground(new Color(78, 129, 151));
 		panel.add(create_btn);
 
-		tip_lbl = new JLabel("群创建成功，您的群号为：535251");
+		tip_lbl = new JLabel("群创建成功，您的群号为：" + group_id);
 		tip_lbl.setForeground(new Color(216, 30, 6));
 		tip_lbl.setFont(new Font("微软雅黑", Font.PLAIN, 16));
 		tip_lbl.setBounds(53, 143, 251, 18);
@@ -178,10 +180,14 @@ public class CreateGroupUI extends JFrame {
 		if (userManager == null) {
 			userManager = new UserManager();
 		}
-		boolean flag = userManager.createGroup(textField.getText().trim(),user_id);
+		// 随机生成群号
+		group_id = (int) (Math.random() * 900000 + 100000);
+		System.out.println(group_id);
+		boolean flag = userManager.createGroup(String.valueOf(group_id),textField.getText().trim(),user_id);
 		if (flag == true) {
+			tip_lbl.setText("群创建成功，您的群号为：" + group_id);
 			tip_lbl.setVisible(true);
-			message.getClientUI().addFriendToList("535251",1);
+			message.getClientUI().addFriendToList(String.valueOf(group_id),1);
 		}
 	}
 

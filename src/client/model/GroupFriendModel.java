@@ -33,10 +33,23 @@ public class GroupFriendModel extends JPanel {
 	private String user_name;
 	private JLabel groupFriend_name;
 
+	public JLabel getGroupFriend_name() {
+		return groupFriend_name;
+	}
+
+	public void setGroupFriend_name(JLabel groupFriend_name) {
+		this.groupFriend_name = groupFriend_name;
+	}
+
 	public GroupFriendModel() {
 		this.init();
 	}
-	
+
+	public GroupFriendModel(String user_name) {
+		this.user_name = user_name;
+		this.init();
+	}
+
 	public GroupFriendModel(String user_id,String user_name) {
 		this.user_id = user_id;
 		this.user_name = user_name;

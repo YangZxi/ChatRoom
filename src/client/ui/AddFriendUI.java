@@ -451,7 +451,7 @@ public class AddFriendUI extends JFrame {
 			String group_name = um.getGroupName(id);
 			this.user_id = id;
 			this.user_name = group_name;
-			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
+			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/535251.jpg")));
 			this.name_lbl.setText(user_name);
 		}
 		this.tip_addOK_lbl.setVisible(true);

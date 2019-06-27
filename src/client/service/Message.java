@@ -421,6 +421,14 @@ public class Message implements Runnable {
             clientUI.getOnlineListPanel().updateUI();   // 刷新
         } else if (type == 1) {
             msg = getMessage(CODE.CLIENT_REQUEST_GROUP, to_id, from_name, from_id, "AGREE");
+            Set<FriendModel> set = clientUI.getPersonList().keySet();
+            for (FriendModel friendModel : set) {
+                if (friendModel.getId() == to_id) {
+                    ChatShowInputUI csUI = clientUI.getPersonList().get(friendModel);
+                    System.out.println("刷新群好友列表");
+                    clientUI.loadGroupFriends(csUI,from_id + ",");
+                }
+            }
 //            clientUI.addFriendToList(from_id, type);
         }
         this.send(msg);

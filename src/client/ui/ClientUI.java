@@ -19,10 +19,7 @@ package client.ui;
  * @since 1.0.0
  */
 
-import client.model.FriendModel;
-import client.model.Group;
-import client.model.InforModel;
-import client.model.User;
+import client.model.*;
 
 import client.service.UserManager;
 import client.util.CloseUtil;
@@ -547,6 +544,9 @@ public class ClientUI extends JFrame {
                 String strID = String.valueOf(group.getGroup_id());
                 String strName = group.getGroup_name();
                 ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 1, message);     // 聊天界面
+//                csUI.setGroup_friends(group.getGroup_friends());    // 将群成员放进群好友列表
+                // 加载群好友列表
+                this.loadGroupFriends(csUI,group.getGroup_friends());
                 FriendModel person = new FriendModel(strID, strName, 1, this, csUI);    // 左侧好友列表的好友
                 person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
                 // 添加进好友Map集合
@@ -558,6 +558,19 @@ public class ClientUI extends JFrame {
             }
         }
 //        System.out.println(myFriendsID.toString());
+    }
+
+    public void loadGroupFriends(ChatShowInputUI csUI,String groupFriends_id) {
+        String[] arr = groupFriends_id.split(",");
+        ArrayList<String> arrayList = userManager.getUsersName(arr);
+        for (String user_name : arrayList) {
+            GroupFriendModel groupFriendModel = new GroupFriendModel(user_name);
+            groupFriendModel.getGroupFriend_name().setText(user_name);
+            groupFriendModel.setBounds(0,csUI.getGroup_friend_num() * 25,160,25);
+            groupFriendModel.setVisible(true);
+            csUI.setGroup_friend_num(csUI.getGroup_friend_num() + 1);
+            csUI.getGroupFriendsPanel_inner().add(groupFriendModel);
+        }
     }
 
     /**
@@ -584,6 +597,8 @@ public class ClientUI extends JFrame {
             String strID = String.valueOf(group.getGroup_id());
             String strName = group.getGroup_name();
             ChatShowInputUI csUI = new ChatShowInputUI(strID, strName, 1, message);     // 聊天界面
+            // 加载群列表
+            this.loadGroupFriends(csUI,group.getGroup_friends());
             FriendModel person = new FriendModel(strID, strName, 1, this, csUI);    // 左侧好友列表的好友
             person.setBounds(0, this.getPersonList().size() * 70, 310, 70);
             // 添加进好友Map集合

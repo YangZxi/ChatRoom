@@ -40,7 +40,7 @@ public class UserManager extends BaseDao {
      * @throws ClassNotFoundException
      */
     public boolean createUser(User user) throws SQLException, ClassNotFoundException {
-        boolean flag = this.getUserByName(user.getName());
+        boolean flag = this.getUserByID(user.getId());
         if (flag == false) {    // 没有用户注册
             String sql = "INSERT INTO `Chat_User` (`user_id`, `user_name`, "
                     + " `user_password`, `user_sex`, `user_hobby`, `user_province`) "
@@ -63,11 +63,12 @@ public class UserManager extends BaseDao {
         return flag;
     }
 
-    public boolean createGroup(String group_name, String user_id) {
+    public boolean createGroup(String group_id,String group_name, String user_id) {
         boolean flag = false;
         String sql = "INSERT INTO `Chat_Group` (`group_id`, `group_name`, `group_friends`, "
-                + " `user_id`) VALUES ('535251', ?, ?, ?)";
+                + " `user_id`) VALUES (? , ?, ?, ?)";
         ArrayList<String> groups = new ArrayList<>();
+        groups.add(group_id);
         groups.add(group_name);
         groups.add(user_id + ",");
         groups.add(user_id);
@@ -168,9 +169,9 @@ public class UserManager extends BaseDao {
      * @return true表示已注册，false未注册
      * @throws SQLException
      */
-    public boolean getUserByName(String userName) throws SQLException {
+    public boolean getUserByID(String userName) throws SQLException {
         boolean flag = false;
-        String sql = "SELECT * FROM `Chat_User` WHERE user_name = ?";
+        String sql = "SELECT * FROM `Chat_User` WHERE user_id = ?";
         ArrayList<String> arrayList = new ArrayList<String>();
         arrayList.add(userName);
         ResultSet resultSet = this.execute(sql, arrayList);
@@ -186,6 +187,27 @@ public class UserManager extends BaseDao {
         String sql = "SELECT * FROM Chat_User WHERE user_id = \'" + user_id + "\'";
         user = (User) this.executeQuery(sql, null).get(0);
         return user;
+    }
+
+    public ArrayList<String> getUsersName(String[] user_id) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        try {
+            conn = getConn();
+            for (int i = 0;i < user_id.length;i++) {
+                String sql = "SELECT user_name FROM Chat_User WHERE user_id = \'" + user_id[i] + "\'";
+                pstmt = conn.prepareStatement(sql);
+                rs = pstmt.executeQuery();
+                while (rs.next()) {
+//                    System.out.println(rs.getString("user_name"));
+                    arrayList.add(rs.getString("user_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
     }
 
     public Group getGroup(String group_id) {
@@ -211,6 +233,12 @@ public class UserManager extends BaseDao {
         return group_name;
     }
 
+    /**
+     * 组装查询结果，通过数据库的type列进行判断是好友还是群
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
     @Override
     protected ArrayList createObject(ResultSet rs) throws SQLException {
         ArrayList<Object> friends = new ArrayList<Object>();
@@ -229,6 +257,7 @@ public class UserManager extends BaseDao {
                 Group group = new Group();
                 group.setGroup_id(rs.getString("group_id"));
                 group.setGroup_name(rs.getString("group_name"));
+                group.setGroup_friends(rs.getString("group_friends"));
                 group.setUser_id(rs.getString("user_id"));
                 friends.add(group);
                 System.out.println("群成功");
@@ -239,7 +268,7 @@ public class UserManager extends BaseDao {
 
     public static void main(String[] args) throws SQLException {
         UserManager u = new UserManager();
-        u.createGroup("创建测试", "123456");
+//        u.createGroup("创建测试", "123456");
 //        u.getUserFriends("666666");
     }
 }
