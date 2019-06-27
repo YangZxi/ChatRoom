@@ -63,6 +63,13 @@ public class UserManager extends BaseDao {
         return flag;
     }
 
+    /**
+     * 创建群聊
+     * @param group_id
+     * @param group_name
+     * @param user_id
+     * @return
+     */
     public boolean createGroup(String group_id,String group_name, String user_id) {
         boolean flag = false;
         String sql = "INSERT INTO `Chat_Group` (`group_id`, `group_name`, `group_friends`, "
@@ -73,7 +80,7 @@ public class UserManager extends BaseDao {
         groups.add(user_id + ",");
         groups.add(user_id);
         int result_num = this.executeSQL(sql, groups);
-        System.out.println("创建成功！" + result_num);
+//        System.out.println("创建成功！" + result_num);
         if (result_num > 0) flag = true;
         return flag;
     }
@@ -164,7 +171,6 @@ public class UserManager extends BaseDao {
 
     /**
      * 获取查询用户的ID
-     *
      * @param userName
      * @return true表示已注册，false未注册
      * @throws SQLException
@@ -182,6 +188,11 @@ public class UserManager extends BaseDao {
         return flag;
     }
 
+    /**
+     * 获取用户信息
+     * @param user_id
+     * @return
+     */
     public User getUser(String user_id) {
         User user = null;
         String sql = "SELECT * FROM Chat_User WHERE user_id = \'" + user_id + "\'";
@@ -189,6 +200,26 @@ public class UserManager extends BaseDao {
         return user;
     }
 
+    public String getUserGroups(String user_id) {
+        String str = null;
+        String sql = "SELECT user_groups FROM Chat_Friend WHERE user_id = \'" + user_id + "\'";
+        ResultSet resultSet = this.execute(sql,null);
+        try {
+            while (resultSet.next()) {
+//                System.out.println(resultSet.getString("user_groups"));
+                str = resultSet.getString("user_groups");
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        return str;
+    }
+
+    /**
+     * 获取多个用户名
+     * @param user_id
+     * @return
+     */
     public ArrayList<String> getUsersName(String[] user_id) {
         ArrayList<String> arrayList = new ArrayList<>();
         try {
@@ -210,6 +241,11 @@ public class UserManager extends BaseDao {
         return arrayList;
     }
 
+    /**
+     * 获取群信息
+     * @param group_id
+     * @return
+     */
     public Group getGroup(String group_id) {
         Group group = null;
         String sql = "SELECT * FROM Chat_Group WHERE group_id = \'" + group_id + "\'";
@@ -217,6 +253,11 @@ public class UserManager extends BaseDao {
         return group;
     }
 
+    /**
+     * 获取群名
+     * @param group_id
+     * @return
+     */
     public String getGroupName(String group_id) {
         String sql = "SELECT group_name FROM Chat_Group WHERE group_id = \'" + group_id + "\'";
         ResultSet resultSet = execute(sql, null);
@@ -264,6 +305,11 @@ public class UserManager extends BaseDao {
             }
         }
         return friends;
+    }
+
+    public void updateGroup(String groups,String user_id) {
+        String sql = "UPDATE `Chat_Friend` SET `user_groups`=\"" + groups + "\" WHERE user_id = \'" + user_id + "\'";
+        this.executeSQL(sql,null);
     }
 
     public static void main(String[] args) throws SQLException {

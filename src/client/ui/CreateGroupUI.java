@@ -185,6 +185,13 @@ public class CreateGroupUI extends JFrame {
 		System.out.println(group_id);
 		boolean flag = userManager.createGroup(String.valueOf(group_id),textField.getText().trim(),user_id);
 		if (flag == true) {
+			String user_groups = userManager.getUserGroups(user_id);
+			if (user_groups == null || user_groups.equals("null")) {
+				user_groups = "";
+			}
+			user_groups = user_groups + user_id +",";
+			userManager.updateGroup(user_groups,user_id);
+
 			tip_lbl.setText("群创建成功，您的群号为：" + group_id);
 			tip_lbl.setVisible(true);
 			message.getClientUI().addFriendToList(String.valueOf(group_id),1);

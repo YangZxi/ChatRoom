@@ -194,7 +194,6 @@ public class Message implements Runnable {
         return str;
     }
 
-
     /**
      * 客户端上线处理
      *
