@@ -32,8 +32,8 @@ import java.util.ArrayList;
 public class ClientMain {
 
     private static int PORT = 3355;
-//    private static String ADDRESS = "47.107.244.7";
-    private static String ADDRESS = "localhost";
+    private static String ADDRESS = "47.107.244.7";
+//    private static String ADDRESS = "localhost";
     private UserManager userManager = null;
 
     /**

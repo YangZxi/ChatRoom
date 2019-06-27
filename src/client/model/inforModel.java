@@ -70,10 +70,15 @@ public class InforModel extends JPanel {
         this.to_id = to_id;
         this.type = type;
         this.init();
-        if (type == 3) {
+        if (type == 0) {
+            headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/" + from_id + ".jpg")));
+        }else if (type == 1) {
+            headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/535251.jpg")));
+        }else if (type == 3) {
             this.remove(re_lbl);
             this.remove(agree_btn);
             this.remove(refuse_btn);
+            headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/535251.jpg")));
         }
     }
 
@@ -103,7 +108,7 @@ public class InforModel extends JPanel {
         });
 
         headIcon = new JLabel("头像");
-        headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/" + from_id + ".jpg")));
+        headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/000000.jpg")));
         headIcon.setBounds(35, 10, 50, 50);
         add(headIcon);
 
