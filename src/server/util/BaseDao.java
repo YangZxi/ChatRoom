@@ -10,7 +10,7 @@ public abstract class BaseDao {
     //数据库驱动程序
     public static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     //数据库连接URL
-    public static final String URL = "jdbc:mysql://47.107.244.7:3306/chatroom?useUnicode=true&characterEncoding=utf8";
+    public static final String URL = "";
     //数据库帐户名
     public static final String DBNAME ="chat";
     //数据库帐户密码
