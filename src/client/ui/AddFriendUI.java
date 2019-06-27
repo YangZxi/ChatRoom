@@ -445,7 +445,11 @@ public class AddFriendUI extends JFrame {
 			User user = um.getUser(id);
 			this.user_id = String.valueOf(user.getId());
 			this.user_name = user.getName();
-			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
+			try {
+				this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
+			}catch (NullPointerException e) {
+				this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/000000.jpg")));
+			}
 			this.name_lbl.setText(user_name);
 		}else if (type == 1) {
 			String group_name = um.getGroupName(id);
