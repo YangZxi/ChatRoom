@@ -148,6 +148,7 @@ public class CreateGroupUI extends JFrame {
 		panel_1.setLayout(null);
 
 		textField = new JTextField();
+		textField.setFont(new Font("微软雅黑", Font.PLAIN, 16));
 		textField.setBounds(16, 5, 170, 38);
 		textField.setBackground(new Color(240, 240, 240));
 		textField.setBorder(null);
