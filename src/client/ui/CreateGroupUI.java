@@ -189,7 +189,7 @@ public class CreateGroupUI extends JFrame {
 			if (user_groups == null || user_groups.equals("null")) {
 				user_groups = "";
 			}
-			user_groups = user_groups + user_id +",";
+			user_groups = user_groups + String.valueOf(group_id) +",";
 			userManager.updateGroup(user_groups,user_id);
 
 			tip_lbl.setText("群创建成功，您的群号为：" + group_id);
