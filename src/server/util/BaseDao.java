@@ -12,9 +12,9 @@ public abstract class BaseDao {
     //数据库连接URL
     public static final String URL = "";
     //数据库帐户名
-    public static final String DBNAME ="chat";
+    public static final String DBNAME ="";
     //数据库帐户密码
-    public static final String DBPASS ="chat123456";
+    public static final String DBPASS ="";
     //分页大小
     //public static final int PAGESIZE = 20;
     private Connection conn = null;//数据库连接
