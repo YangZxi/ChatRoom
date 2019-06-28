@@ -51,6 +51,7 @@ public class AddFriendUI extends JFrame {
 	private int findType = 0;
 	private String headIcon;
 	private String user_id;
+	private String add_user_id;
 	private String user_name;
 	private Message message;
 
@@ -386,12 +387,13 @@ public class AddFriendUI extends JFrame {
 		name_lbl.setFont(new Font("微软雅黑", Font.PLAIN, 19));
 		name_lbl.setBounds(75, 17, 220, 30);
 		find_result.add(name_lbl);
-		
+
+		// 添加按钮
 		add_lbl = new JLabel("");
 		add_lbl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				String id = user_id;
+				String id = add_user_id;
 //				findAfter_panel.add(tip_addOK_lbl);
 				tip_addOK_lbl.setVisible(true);
 //				System.out.println(id + "  申请  " + findType);
@@ -443,17 +445,17 @@ public class AddFriendUI extends JFrame {
 		UserManager um = new UserManager();
 		if (type == 0) {
 			User user = um.getUser(id);
-			this.user_id = String.valueOf(user.getId());
+			this.add_user_id = String.valueOf(user.getId());
 			this.user_name = user.getName();
 			try {
-				this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + user_id + ".jpg")));
+				this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/" + add_user_id + ".jpg")));
 			}catch (NullPointerException e) {
 				this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/000000.jpg")));
 			}
 			this.name_lbl.setText(user_name);
 		}else if (type == 1) {
 			String group_name = um.getGroupName(id);
-			this.user_id = id;
+			this.add_user_id = id;
 			this.user_name = group_name;
 			this.headIcon_lbl.setIcon(new ImageIcon(AddFriendUI.class.getResource("/client/images/535251.jpg")));
 			this.name_lbl.setText(user_name);

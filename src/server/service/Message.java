@@ -301,6 +301,7 @@ public class Message implements Runnable {
         String msg = this.getMessage(CODE.SERVER_CHANGE_GROUP, from_id, from_name, group_id, message);
         // 通过群号获取群主id
         String user_id = userManager.getGroupOwner(group_id);
+        System.out.println("群主id" + user_id);
         this.send(user_id, msg);
     }
 

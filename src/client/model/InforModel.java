@@ -71,7 +71,11 @@ public class InforModel extends JPanel {
         this.type = type;
         this.init();
         if (type == 0) {
-            headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/" + from_id + ".jpg")));
+            try {
+                headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/" + from_id + ".jpg")));
+            }catch (NullPointerException e) {
+                headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/000000.jpg")));
+            }
         }else if (type == 1) {
             headIcon.setIcon(new ImageIcon(InforModel.class.getResource("/client/images/535251.jpg")));
         }else if (type == 3) {

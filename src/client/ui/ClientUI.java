@@ -515,7 +515,9 @@ public class ClientUI extends JFrame {
     }
 
     /**
-     * 加载好友
+     * 加载好友和群
+     * @param type   0 好友，1 群
+     * @throws SQLException
      */
     public void loadFriendList(int type) throws SQLException {
         ArrayList<Object> friends = userManager.getFriends(String.valueOf(this.user.getId()));
@@ -560,6 +562,11 @@ public class ClientUI extends JFrame {
 //        System.out.println(myFriendsID.toString());
     }
 
+    /**
+     * 加载群好友
+     * @param csUI
+     * @param groupFriends_id
+     */
     public void loadGroupFriends(ChatShowInputUI csUI,String groupFriends_id) {
         String[] arr = groupFriends_id.split(",");
         ArrayList<String> arrayList = userManager.getUsersName(arr);

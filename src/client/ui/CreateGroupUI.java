@@ -194,6 +194,7 @@ public class CreateGroupUI extends JFrame {
 			userManager.updateGroup(user_groups,user_id);
 
 			tip_lbl.setText("群创建成功，您的群号为：" + group_id);
+			System.out.println("群号" + group_id + "群主" + user_id);
 			tip_lbl.setVisible(true);
 			message.getClientUI().addFriendToList(String.valueOf(group_id),1);
 		}

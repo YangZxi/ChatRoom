@@ -103,7 +103,11 @@ public class FriendModel extends JPanel {
         this.personName.setText(user_name);
         String person_type = type == 0 ? "离线" : "群聊";
         if (type == 0) {
-            headIcon.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/" + this.id + ".jpg")));
+            try {
+                headIcon.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/" + this.id + ".jpg")));
+            }catch (NullPointerException e) {
+                headIcon.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/000000.jpg")));
+            }
         } else if (type == 1) {
             headIcon.setIcon(new ImageIcon(FriendModel.class.getResource("/client/images/535251.jpg")));
         }
